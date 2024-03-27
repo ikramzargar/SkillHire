@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "241728797415",
+    "project_id": "skillhire-34d32",
+    "storage_bucket": "skillhire-34d32.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:241728797415:android:5e9858c9096ae698dfc042",
+        "android_client_info": {
+          "package_name": "com.ikramzargar.skill_hire"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD_TlFDMS_VqwP1nu9Sf2AWQwKsA9QNnvE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
