@@ -1,6 +1,8 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:skill_hire/globals/app_textStyle.dart';
+import 'auth.dart';
+import 'register.dart';
 
 class IntroScreen extends StatefulWidget {
   const IntroScreen({super.key});
@@ -26,8 +28,8 @@ class _IntroScreenState extends State<IntroScreen> {
                 children: [
                   TextSpan(
                     text: 'Hire',
-                    style: AppTextStyles.heading1()
-                        .copyWith(color: Colors.green),
+                    style:
+                        AppTextStyles.heading1().copyWith(color: Colors.green),
                   ),
                 ],
               ),
@@ -70,17 +72,27 @@ class _IntroScreenState extends State<IntroScreen> {
               repeatForever: true,
             ),
           ),
-          const SizedBox(height: 50,),
+          const SizedBox(
+            height: 50,
+          ),
           Center(
             child: MaterialButton(
               color: Colors.green,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20),
               ),
-              onPressed: () {},
-              child: const  Padding(
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (BuildContext context) => Register()));
+              },
+              child: const Padding(
                 padding: EdgeInsets.all(8.0),
-                child: Text('Let`s Start',style: TextStyle(fontSize: 30),),
+                child: Text(
+                  'Let`s Start',
+                  style: TextStyle(fontSize: 30),
+                ),
               ),
             ),
           ),
