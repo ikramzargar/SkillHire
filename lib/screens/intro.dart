@@ -1,6 +1,7 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:skill_hire/globals/app_textStyle.dart';
+import '../globals/app_Colors.dart';
 import 'auth.dart';
 import 'register.dart';
 
