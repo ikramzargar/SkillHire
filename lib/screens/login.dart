@@ -269,19 +269,35 @@ class _LoginPageState extends State<LoginPage> {
           email: email,
           password: password,
         );
-        User? user = FirebaseAuth.instance.currentUser;
+        FirebaseAuth.instance.currentUser;
         route();
-      } on FirebaseAuthException catch (e) {
+      } on FirebaseAuthException {
         setState(() {
+          _showDialog(context);
           visible = false; // Hide spinner in case of authentication failure
         });
-        if (e.code == 'user-not-found') {
-          print('No user found for that email.');
-        } else if (e.code == 'wrong-password') {
-          print('Wrong password provided for that user.');
-        }
       }
     }
+  }
+  void _showDialog(BuildContext context, ) {
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Error'),
+          content: const Text('Email not found/ Email and password does not match'),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Retry'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
   // void signIn(String email, String password) async {
   //   if (_formkey.currentState!.validate()) {
