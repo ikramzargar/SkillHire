@@ -3,7 +3,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:skill_hire/globals/app_Colors.dart';
+import 'package:skill_hire/screens/sp_form.dart';
+import 'package:skill_hire/screens/userHomePage.dart';
+import 'package:skill_hire/screens/user_form.dart';
 import 'login.dart';
+import 'spHomePage.dart';
 
 class Register extends StatefulWidget {
   @override
@@ -336,7 +340,7 @@ class _RegisterState extends State<Register> {
       await _auth
           .createUserWithEmailAndPassword(email: email, password: password)
           .then((value) => {postDetailsToFirestore(email, role)})
-          .catchError((e) {});
+          .catchError((e){});
     }
   }
 
@@ -345,7 +349,14 @@ class _RegisterState extends State<Register> {
     var user = _auth.currentUser;
     CollectionReference ref = FirebaseFirestore.instance.collection('users');
     ref.doc(user!.uid).set({'email': emailController.text, 'role': role});
-    Navigator.pushReplacement(
-        context, MaterialPageRoute(builder: (context) => LoginPage()));
+    if (role == 'User'){
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context) => const UserForm()));
+    }
+    else {
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context) => const SpForm()));
+    }
+
   }
 }
