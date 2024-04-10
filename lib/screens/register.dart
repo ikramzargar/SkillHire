@@ -15,7 +15,6 @@ class Register extends StatefulWidget {
 }
 
 class _RegisterState extends State<Register> {
-  _RegisterState();
 
   bool showProgress = false;
   bool visible = false;
@@ -104,7 +103,8 @@ class _RegisterState extends State<Register> {
                             if (value!.isEmpty) {
                               return "Email cannot be empty";
                             }
-                            if (!RegExp("^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+.[a-z]")
+                            if (!RegExp(
+                                    "^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+.[a-z]")
                                 .hasMatch(value)) {
                               return ("Please enter a valid email");
                             } else {
@@ -220,14 +220,15 @@ class _RegisterState extends State<Register> {
                               ),
                               child: DropdownButton<String>(
                                 dropdownColor: Colors.green,
-                                 isDense: true,
+                                isDense: true,
                                 iconEnabledColor: Colors.black,
                                 focusColor: Colors.black,
                                 items: options.map((String dropDownStringItem) {
                                   return DropdownMenuItem<String>(
                                     value: dropDownStringItem,
                                     child: Padding(
-                                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 10),
                                       child: Text(
                                         dropDownStringItem,
                                         style: const TextStyle(
@@ -315,12 +316,12 @@ class _RegisterState extends State<Register> {
                         ),
                         onTap: () {
                           const CircularProgressIndicator();
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => LoginPage(),
-                                ),
-                              );
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => LoginPage(),
+                            ),
+                          );
                         },
                       ),
                     ],
@@ -340,7 +341,7 @@ class _RegisterState extends State<Register> {
       await _auth
           .createUserWithEmailAndPassword(email: email, password: password)
           .then((value) => {postDetailsToFirestore(email, role)})
-          .catchError((e){});
+          .catchError((e) {});
     }
   }
 
@@ -349,14 +350,12 @@ class _RegisterState extends State<Register> {
     var user = _auth.currentUser;
     CollectionReference ref = FirebaseFirestore.instance.collection('users');
     ref.doc(user!.uid).set({'email': emailController.text, 'role': role});
-    if (role == 'User'){
+    if (role == 'User') {
       Navigator.pushReplacement(
           context, MaterialPageRoute(builder: (context) => const UserForm()));
-    }
-    else {
+    } else {
       Navigator.pushReplacement(
           context, MaterialPageRoute(builder: (context) => const SpForm()));
     }
-
   }
 }

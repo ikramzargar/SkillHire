@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:skill_hire/globals/app_textStyle.dart';
 
@@ -57,7 +59,7 @@ class _SpFormState extends State<SpForm> {
                       fillColor: Colors.white,
                       enabledBorder: UnderlineInputBorder(
                           borderSide:
-                          BorderSide(color: Colors.black, width: 2)),
+                              BorderSide(color: Colors.black, width: 2)),
                     ),
                   ),
                   SizedBox(
@@ -93,7 +95,7 @@ class _SpFormState extends State<SpForm> {
                       fillColor: Colors.white,
                       enabledBorder: UnderlineInputBorder(
                           borderSide:
-                          BorderSide(color: Colors.black, width: 2)),
+                              BorderSide(color: Colors.black, width: 2)),
                     ),
                   ),
                   SizedBox(height: 30),
@@ -109,7 +111,7 @@ class _SpFormState extends State<SpForm> {
                       fillColor: Colors.white,
                       enabledBorder: UnderlineInputBorder(
                           borderSide:
-                          BorderSide(color: Colors.black, width: 2)),
+                              BorderSide(color: Colors.black, width: 2)),
                     ),
                   ),
                 ],
@@ -119,7 +121,13 @@ class _SpFormState extends State<SpForm> {
               height: 30,
             ),
             MaterialButton(
-              onPressed: () {},
+              onPressed: () {
+                setState(() {
+                  String? userid = getCurrentUserId();
+                  savespData(nameController.text, noController.text,
+                      addressController.text, professionController.text , userid!);
+                });
+              },
               color: Colors.green,
               child: Text(
                 'Save',
@@ -133,5 +141,35 @@ class _SpFormState extends State<SpForm> {
         ),
       ),
     );
+  }
+
+  Future<void> savespData(
+      String name, String mobileNo, String address, String profession , String userid) async {
+    try {
+      await FirebaseFirestore.instance.collection('spdata').add({
+        'name': name,
+        'mobileNo': mobileNo,
+        'address': address,
+        'profession': profession,
+        'userid' : userid,
+        // Add more fields as needed
+      });
+      print('User data saved successfully!');
+    } catch (e) {
+      print('Error saving user data: $e');
+    }
+  }
+
+  String? getCurrentUserId() {
+    User? user = FirebaseAuth.instance.currentUser;
+
+    if (user != null) {
+      String userId = user.uid;
+      print('Current User ID: $userId');
+      return userId;
+    } else {
+      print('No user is currently signed in.');
+      return null;
+    }
   }
 }
