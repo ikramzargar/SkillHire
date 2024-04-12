@@ -1,5 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
+import 'user_screens/user_homescreen.dart';
+import 'user_screens/user_profile.dart';
+import 'user_screens/user_providers_screen.dart';
 
 class UserHomePage extends StatefulWidget {
   const UserHomePage({super.key});
@@ -9,6 +13,11 @@ class UserHomePage extends StatefulWidget {
 }
 
 class _UserHomePageState extends State<UserHomePage> {
+  List<Widget> screenList = [
+    UserHome(),
+    UserProviders(),
+    UserProfile(),
+  ];
   int homeIndex = 0;
   @override
   Widget build(BuildContext context) {
@@ -42,11 +51,12 @@ class _UserHomePageState extends State<UserHomePage> {
               padding: EdgeInsets.all(16),
               tabs: [
             GButton(icon: Icons.home,text: 'Home',),
-            GButton(icon: Icons.home_repair_service,text: 'Providers',),
+            GButton(icon: Icons.home_repair_service,text:  'Providers',),
             GButton(icon: Icons.person,text: 'Profile',)
           ]),
         ),
       ),
+      body: IndexedStack(children:screenList,index: homeIndex,),
     );
   }
 }
