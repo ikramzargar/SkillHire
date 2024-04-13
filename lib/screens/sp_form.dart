@@ -236,13 +236,12 @@
 //
 // }
 
-
-
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:skill_hire/globals/app_textStyle.dart';
 import 'package:skill_hire/location_service.dart';
+import 'package:skill_hire/screens/sp_homepage.dart';
 
 class SpForm extends StatefulWidget {
   const SpForm({Key? key}) : super(key: key);
@@ -311,18 +310,27 @@ class _SpFormState extends State<SpForm> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   _buildTextField('Name', nameController),
-                  _buildTextField('Mobile No.', noController, keyboardType: TextInputType.number, maxLength: 10),
+                  _buildTextField('Mobile No.', noController,
+                      keyboardType: TextInputType.number, maxLength: 10),
                   _buildTextField('Address', addressController),
                   _buildTextField('Profession', professionController),
-                  _buildTextField('Experience (Years)', experienceController, keyboardType: TextInputType.number, maxLength: 2),
-                  _buildTextField('Rate (Rs/Day)', rateController, keyboardType: TextInputType.number, maxLength: 4),
+                  _buildTextField('Experience (Years)', experienceController,
+                      keyboardType: TextInputType.number, maxLength: 2),
+                  _buildTextField('Rate (Rs/Day)', rateController,
+                      keyboardType: TextInputType.number, maxLength: 4),
                 ],
               ),
             ),
             const SizedBox(height: 30),
             MaterialButton(
               onPressed: () {
-                saveSpData();
+                setState(() {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (BuildContext) => SpHomePage()));
+                  saveSpData();
+                });
               },
               color: Colors.green,
               child: Text(
@@ -337,7 +345,8 @@ class _SpFormState extends State<SpForm> {
     );
   }
 
-  Widget _buildTextField(String label, TextEditingController controller, {TextInputType? keyboardType, int? maxLength}) {
+  Widget _buildTextField(String label, TextEditingController controller,
+      {TextInputType? keyboardType, int? maxLength}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
