@@ -10,6 +10,13 @@ class SpJobs extends StatefulWidget {
 class _SpJobsState extends State<SpJobs> {
   @override
   Widget build(BuildContext context) {
-    return const Text('Spjobs');
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          SizedBox(height: 20,),
+          Center(child: Text('Available Jobs',style: TextStyle(fontSize: 25),))
+        ],
+      ),
+    );
   }
 }

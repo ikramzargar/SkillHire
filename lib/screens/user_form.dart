@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:skill_hire/globals/app_textStyle.dart';
+import 'package:skill_hire/location_service.dart';
 
 class UserForm extends StatefulWidget {
   const UserForm({super.key});
@@ -14,6 +15,28 @@ class _UserFormState extends State<UserForm> {
   TextEditingController nameController = TextEditingController();
   TextEditingController noController = TextEditingController();
   TextEditingController addressController = TextEditingController();
+
+  @override
+  void initState() {
+    getLocation();
+    super.initState();
+  }
+  late   double lat;
+  late double lon;
+  Future<void> getLocation() async {
+    try {
+      Location location = Location(); // Create an instance of Location
+      await location.getCurrentLocation(); // Retrieve current location
+      setState(() {
+        lat = location.latitude;
+        lon = location.longitude;
+        print(lat);
+        print(lon);
+      });
+    } catch (e) {
+      print('Error getting location: $e');
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
