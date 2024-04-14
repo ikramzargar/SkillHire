@@ -319,16 +319,7 @@ class _UserFormState extends State<UserForm> {
       print('Error saving user data: $e');
     }
   }
-  // String? getCurrentUserId() {
-  //   User? user = FirebaseAuth.instance.currentUser;
-  //   if (user != null) {
-  //     String userId = user.uid;
-  //     print('Current User ID: $userId');
-  //     return userId;
-  //   } else {
-  //     print('No user is currently signed in.');
-  //     return null;
-  //   }
+
   }
 // }
 
