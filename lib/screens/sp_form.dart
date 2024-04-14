@@ -372,37 +372,57 @@ class _SpFormState extends State<SpForm> {
     );
   }
 
-  void saveSpData() async {
+  Future<void> saveSpData() async {
     try {
-      String? userId = getCurrentUserId();
-      if (userId != null) {
-        await FirebaseFirestore.instance.collection('spdata').add({
-          'name': nameController.text,
-          'mobileNo': noController.text,
-          'address': addressController.text,
-          'profession': professionController.text,
-          'experience': experienceController.text,
-          'rate': rateController.text,
-          'userId': userId,
-          'latitude': lat,
-          'longitude': lon,
-        });
-        print('Service provider data saved successfully!');
+      User? user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        String userId = user.uid;
+        String? userEmail = user.email;
+        bool availability = true;
+
+        if (userId != null && userEmail != null) {
+          // Specify the document ID as the user ID
+          await FirebaseFirestore.instance
+              .collection('spdata')
+              .doc(userId)
+              .set({
+            'name': nameController.text,
+            'mobileNo': noController.text,
+            'address': addressController.text,
+            'profession': professionController.text,
+            'experience': experienceController.text,
+            'rate': rateController.text,
+            'userId': userId,
+            'latitude': lat,
+            'longitude': lon,
+            'email': userEmail,
+            'available' : availability// Include user's email in Firestore
+          });
+          print('User data saved successfully!');
+        } else {
+          print('User ID or email is null.');
+        }
       } else {
-        print('User ID is null. Unable to save data.');
+        print('No user is currently signed in.');
       }
     } catch (e) {
-      print('Error saving service provider data: $e');
+      print('Error saving user data: $e');
     }
   }
 
-  String? getCurrentUserId() {
-    User? user = FirebaseAuth.instance.currentUser;
-    if (user != null) {
-      return user.uid;
-    } else {
-      print('No user is currently signed in.');
-      return null;
-    }
-  }
+  // void  async {
+  //   try {
+  //     String? userId = getCurrentUserId();
+  //     if (userId != null) {
+  //       await FirebaseFirestore.instance.collection('spdata').add({
+  //
+  //       });
+  //       print('Service provider data saved successfully!');
+  //     } else {
+  //       print('User ID is null. Unable to save data.');
+  //     }
+  //   } catch (e) {
+  //     print('Error saving service provider data: $e');
+  //   }
+  // }
 }

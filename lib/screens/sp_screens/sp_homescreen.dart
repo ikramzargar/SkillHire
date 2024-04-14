@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class SpHome extends StatefulWidget {
@@ -8,7 +10,47 @@ class SpHome extends StatefulWidget {
 }
 
 class _SpHomeState extends State<SpHome> {
-  bool light = false;
+  bool status = true; // Default value for Switch
+  late FirebaseFirestore _firestore;
+  late DocumentReference _docRef;
+
+  @override
+  void initState() {
+    super.initState();
+    _firestore = FirebaseFirestore.instance;
+    String? userId = getCurrentUserId();
+    if (userId != null) {
+      _docRef = _firestore.collection('spdata').doc(userId);
+      // Retrieve initial value from Firestore and update local state
+      _docRef.get().then((docSnapshot) {
+        if (docSnapshot.exists) {
+          setState(() {
+            status = docSnapshot['available'] ?? true; // Use Firestore value or default to true
+          });
+        }
+      });
+    }
+  }
+
+  String? getCurrentUserId() {
+    User? user = FirebaseAuth.instance.currentUser;
+    return user?.uid;
+  }
+
+  void _updateSwitchState(bool newValue) {
+    setState(() {
+      status = newValue; // Update local state
+    });
+
+    // Update Firestore document with new value
+    _docRef.set({'available': newValue}, SetOptions(merge: true)).then((_) {
+      print('Switch state updated in Firestore');
+    }).catchError((error) {
+      print('Failed to update switch state: $error');
+      // Handle error
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -59,11 +101,11 @@ class _SpHomeState extends State<SpHome> {
                     width: 20,
                   ),
                   Switch(
-                    value: light,
+                    value: status,
                     activeColor: Colors.red,
                     onChanged: (bool value) {
                       setState(() {
-                        light = value;
+                        _updateSwitchState(value);
                       });
                     },
                   ),

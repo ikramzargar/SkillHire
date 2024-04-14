@@ -1,8 +1,8 @@
+
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class UserProviders extends StatefulWidget {
-  const UserProviders({super.key});
-
   @override
   State<UserProviders> createState() => _UserProvidersState();
 }
@@ -10,12 +10,55 @@ class UserProviders extends StatefulWidget {
 class _UserProvidersState extends State<UserProviders> {
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          SizedBox(height: 20,),
-          Center(child: Text('Available Providers',style: TextStyle(fontSize: 25),))
-        ],
+    return Scaffold(
+      body: StreamBuilder(
+        stream: FirebaseFirestore.instance
+            .collection('spdata')
+            .where('available', isEqualTo: true)
+            .snapshots(),
+        builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+          if (snapshot.hasError) {
+            return Center(
+              child: Text('Error: ${snapshot.error}'),
+            );
+          }
+
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+
+          final docs = snapshot.data?.docs ?? [];
+
+          if (docs.isEmpty) {
+            return Center(
+              child: Text('No available service providers.'),
+            );
+          }
+
+          return ListView.builder(
+            itemCount: docs.length,
+            itemBuilder: (context, index) {
+              final spData = docs[index].data();
+
+              // Perform type casting and null checks
+              if (spData is Map<String, dynamic>) {
+                final name = spData['name'] as String?;
+                final profession = spData['profession'] as String?;
+
+                return ListTile(
+                  title: Text(name ?? 'No Name'),
+                  subtitle: Text(profession ?? 'No Profession'),
+                  // Add more fields as needed
+                );
+              }
+
+              // Handle other cases or return a default widget
+              return SizedBox.shrink(); // Empty widget if data is invalid
+            },
+          );
+        },
       ),
     );
   }

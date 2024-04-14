@@ -2,7 +2,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:skill_hire/screens/sp_form.dart';
+import 'package:skill_hire/screens/sp_homepage.dart';
 import 'package:skill_hire/screens/user_form.dart';
+import 'package:skill_hire/screens/user_homepage.dart';
 import '../globals/app_Colors.dart';
 import 'spHomePage.dart';
 import 'userHomePage.dart';
@@ -247,14 +249,14 @@ class _LoginPageState extends State<LoginPage> {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-              builder: (context) => const UserForm(),
+              builder: (context) => const UserHomePage(),
             ),
           );
         } else {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-              builder: (context) => const SpForm(),
+              builder: (context) => const SpHomePage(),
             ),
           );
         }

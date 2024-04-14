@@ -289,19 +289,29 @@ class _UserFormState extends State<UserForm> {
     );
   }
 
+
   Future<void> saveUserData() async {
     try {
-      String? userId = getCurrentUserId();
-      if (userId != null) {
-        await FirebaseFirestore.instance.collection('userdata').add({
-          'name': nameController.text,
-          'mobileNo': noController.text,
-          'address': addressController.text,
-          'userId': userId,
-          'latitude': lat,
-          'longitude': lon,
-        });
-        print('User data saved successfully!');
+      User? user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        String userId = user.uid;
+        String? userEmail = user.email;
+
+        if (userId != null && userEmail != null) {
+          // Specify the document ID as the user ID
+          await FirebaseFirestore.instance.collection('userdata').doc(userId).set({
+            'name': nameController.text,
+            'mobileNo': noController.text,
+            'address': addressController.text,
+            'userId': userId,
+            'email': userEmail, // Include user's email in Firestore
+            'latitude': lat,
+            'longitude': lon,
+          });
+          print('User data saved successfully!');
+        } else {
+          print('User ID or email is null.');
+        }
       } else {
         print('No user is currently signed in.');
       }
@@ -309,17 +319,16 @@ class _UserFormState extends State<UserForm> {
       print('Error saving user data: $e');
     }
   }
-
-  String? getCurrentUserId() {
-    User? user = FirebaseAuth.instance.currentUser;
-    if (user != null) {
-      String userId = user.uid;
-      print('Current User ID: $userId');
-      return userId;
-    } else {
-      print('No user is currently signed in.');
-      return null;
-    }
+  // String? getCurrentUserId() {
+  //   User? user = FirebaseAuth.instance.currentUser;
+  //   if (user != null) {
+  //     String userId = user.uid;
+  //     print('Current User ID: $userId');
+  //     return userId;
+  //   } else {
+  //     print('No user is currently signed in.');
+  //     return null;
+  //   }
   }
-}
+// }
 

@@ -26,6 +26,7 @@ class _SpHomePageState extends State<SpHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         backgroundColor: Colors.green,
         title: Center(
           child: Text('SkillHire'),
