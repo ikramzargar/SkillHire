@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -11,11 +12,18 @@ class JobCreationForm extends StatefulWidget {
 class _JobCreationFormState extends State<JobCreationForm> {
   final TextEditingController titleController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
+  final TextEditingController requirmentController = TextEditingController();
+  final TextEditingController rateController = TextEditingController();
   String userId = '';
+  String name = '';
+  String adress = '';
+  String mobileNum = '';
+  double lat = 0;
+  double lon = 0;
 
   @override
   void initState() {
-    userId = getCurrentUserId()!;
+    fetchUserData();
     super.initState();
   }
 
@@ -29,22 +37,39 @@ class _JobCreationFormState extends State<JobCreationForm> {
           decoration: InputDecoration(labelText: 'Job Title'),
         ),
         TextField(
+          controller: requirmentController,
+          decoration: InputDecoration(labelText: 'Job Requirment'),
+        ),
+        TextField(
           controller: descriptionController,
           decoration: InputDecoration(labelText: 'Job Description'),
         ),
+        TextField(
+          controller: rateController,
+          decoration: InputDecoration(labelText: 'Expected rate'),
+        ),
+        SizedBox(
+          height: 10,
+        ),
         ElevatedButton(
           onPressed: () {
-            // Handle job creation here
             final jobTitle = titleController.text;
             final jobDescription = descriptionController.text;
+            final jobRequirment = requirmentController.text;
+            final jobRate = rateController.text;
+            FirestoreService().createJob(Job(
+              title: jobTitle,
+              description: jobDescription,
+              userId: userId,
+              requirment: jobRequirment,
+              rate: jobRate,
+              createdby: name,
+              mobile: mobileNum,
+              adress: adress,
+              lat: lat,
+              lon: lon,
+            ));
 
-            // Validate and save the job to Firestore or perform other actions
-            // For example:
-            FirestoreService().createJob(Job(title: jobTitle,
-                description: jobDescription,
-                userId: userId));
-
-            // Close the dialog
             Navigator.of(context).pop();
           },
           child: Text('Create Job'),
@@ -53,15 +78,32 @@ class _JobCreationFormState extends State<JobCreationForm> {
     );
   }
 
-  String? getCurrentUserId() {
-    User? user = FirebaseAuth.instance.currentUser;
-    if (user != null) {
-      String userId = user.uid;
-      print('Current User ID: $userId');
-      return userId;
-    } else {
-      print('No user is currently signed in.');
-      return null;
+  Future<void> fetchUserData() async {
+    try {
+      User? user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        DocumentSnapshot userData = await FirebaseFirestore.instance
+            .collection('userdata')
+            .doc(user.uid)
+            .get();
+        if (userData.exists) {
+          print('User Data Retrieved Successfully: ${userData.data()}');
+          setState(() {
+            userId = userData['userId'] ?? '';
+            name = userData['name'] ?? '';
+            adress = userData['address'] ?? '';
+            mobileNum = userData['mobileNo'] ?? '';
+            lat = userData['latitude'] ?? '';
+            lon = userData['longitude'] ?? '';
+          });
+        } else {
+          print('User Data Does Not Exist for UserID: ${user.uid}');
+        }
+      } else {
+        print('No User is Currently Signed In');
+      }
+    } catch (e) {
+      print('Error Fetching User Data: $e');
     }
   }
 }

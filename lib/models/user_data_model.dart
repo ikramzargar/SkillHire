@@ -3,7 +3,7 @@ class UserData {
   String email;
   String phone;
   String address;
-  String userId; // This can be the Firebase user ID
+  String userId;
   double latitude;
   double longitude;
 

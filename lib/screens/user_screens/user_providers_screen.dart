@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -42,7 +41,6 @@ class _UserProvidersState extends State<UserProviders> {
             itemBuilder: (context, index) {
               final spData = docs[index].data();
 
-              // Perform type casting and null checks
               if (spData is Map<String, dynamic>) {
                 final name = spData['name'] as String?;
                 final profession = spData['profession'] as String?;
@@ -50,12 +48,9 @@ class _UserProvidersState extends State<UserProviders> {
                 return ListTile(
                   title: Text(name ?? 'No Name'),
                   subtitle: Text(profession ?? 'No Profession'),
-                  // Add more fields as needed
                 );
               }
-
-              // Handle other cases or return a default widget
-              return SizedBox.shrink(); // Empty widget if data is invalid
+              return SizedBox.shrink();
             },
           );
         },

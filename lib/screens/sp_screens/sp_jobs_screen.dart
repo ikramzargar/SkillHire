@@ -1,27 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-
-// class SpJobs extends StatefulWidget {
-//   const SpJobs({super.key});
-//
-//   @override
-//   State<SpJobs> createState() => _SpJobsState();
-// }
-//
-// class _SpJobsState extends State<SpJobs> {
-//   @override
-//   Widget build(BuildContext context) {
-//     return SingleChildScrollView(
-//       child: Column(
-//         children: [
-//           SizedBox(height: 20,),
-//           Center(child: Text('Available Jobs',style: TextStyle(fontSize: 25),))
-//         ],
-//       ),
-//     );
-//   }
-// }
-
 class SpJobs extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -37,39 +15,96 @@ class SpJobs extends StatelessWidget {
           itemCount: jobs.length,
           itemBuilder: (context, index) {
             final job = jobs[index];
-            final jobId = job.id; // Get the Firestore document ID
+            final jobId = job.id;
 
             return Hero(
               tag: 'ListTile-Hero-$jobId',
               child: Material(
                 child: Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.symmetric(vertical: 12,horizontal: 10),
                   child: ListTile(
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(15.0),
                     ),
-                    title: Text(job['title'] ?? ''),
-                    subtitle: Text('Created by: ${job['userId']}'),
+                    title: Column(
+                      children: [
+                        Row(
+                          children: [
+                            Text(job['title'] ?? ''),
+                            SizedBox(width: 100,),
+                            Text(job['requirment']?? ''),
+                          ],
+                        ),
+                        Text('Created by: ${job['createdby']}'),
+                      ],
+                    ),
+                    subtitle: Text('Click to know more.'),
                     tileColor: Colors.green,
                     onTap: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute<void>(builder: (BuildContext context) {
                           return Scaffold(
-                            appBar: AppBar(title: Text(job['title'] ?? '')),
-                            body: Center(
-                              child: Hero(
-                                tag: 'ListTile-Hero-$jobId',
-                                child: Material(
-                                  child: ListTile(
-                                    title: Text(job['title'] ?? ''),
-                                    subtitle: Text('Created by: ${job['userId']}'),
-                                    tileColor: Colors.green,
-                                    onTap: () {
-                                      Navigator.pop(context);
-                                    },
+                            appBar: AppBar(title: Text('Job')),
+                            body:Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 20),
+                              child: Column(
+                                children: [
+                                  SizedBox(height: 30,),
+                                  Row(
+                                    children: [
+                                      Text('Title : ',style: TextStyle(fontSize: 20),),
+                                      Text(job['title'] ?? '',style: TextStyle(fontSize: 20),),
+                                    ],
                                   ),
-                                ),
+                                  SizedBox(height: 20,),
+                                  Row(
+                                    children: [
+                                      Text('Requirment : ',style: TextStyle(fontSize: 20),),
+                                      Text(job['requirment'] ?? '',style: TextStyle(fontSize: 20),),
+                                    ],
+                                  ),
+                                  SizedBox(height: 20,),
+                                  Row(
+                                    children: [
+                                      Text('Description : ',style: TextStyle(fontSize: 20),),
+                                      Text(job['description'] ?? '',style: TextStyle(fontSize: 20),),
+                                    ],
+                                  ),
+                                  SizedBox(height: 20,),
+                                  Row(
+                                    children: [
+                                      Text('Address : ',style: TextStyle(fontSize: 20),),
+                                      Text(job['adress'] ?? '',style: TextStyle(fontSize: 20),),
+                                    ],
+                                  ),
+                                  SizedBox(height: 20,),
+                                  Row(
+                                    children: [
+                                      Text('Created by : ',style: TextStyle(fontSize: 20),),
+                                      Text(job['createdby'] ?? '',style: TextStyle(fontSize: 20),),
+                                    ],
+                                  ),
+                                  SizedBox(height: 20,),
+                                  Row(
+                                    children: [
+                                      Text('Mobile No. : ',style: TextStyle(fontSize: 20),),
+                                      Text(job['mobile'] ?? '',style: TextStyle(fontSize: 20),),
+                                    ],
+                                  ),
+                                  SizedBox(height: 20,),
+                                  Row(
+                                    children: [
+                                      Text('Expected Rate : ',style: TextStyle(fontSize: 20),),
+                                      Text(job['rate'] ?? '',style: TextStyle(fontSize: 20),),
+                                    ],
+                                  ),
+                                  SizedBox(height: 20,),
+                                  MaterialButton(
+                                    onPressed: (){Navigator.pop(context);},child: Text('Back'),
+                                    color: Colors.green,
+                                  )
+                                ],
                               ),
                             ),
                           );
@@ -82,59 +117,10 @@ class SpJobs extends StatelessWidget {
             );
           },
         );
-        // return ListView.builder(
-        //   itemCount: jobs.length,
-        //   itemBuilder: (context, index) {
-        //     final job = jobs[index];
-        //     return Hero(
-        //       tag: 'ListTile-Hero',
-        //       // Wrap the ListTile in a Material widget so the ListTile has someplace
-        //       // to draw the animated colors during the hero transition.
-        //       child: Material(
-        //         child: ListTile(
-        //           title: const Text('ListTile with Hero'),
-        //           subtitle: const Text('Tap here for Hero transition'),
-        //           tileColor: Colors.cyan,
-        //           onTap: () {
-        //             Navigator.push(
-        //               context,
-        //               MaterialPageRoute<Widget>(builder: (BuildContext context) {
-        //                 return Scaffold(
-        //                   appBar: AppBar(title: const Text('ListTile Hero')),
-        //                   body: Center(
-        //                     child: Hero(
-        //                       tag: 'ListTile-Hero',
-        //                       child: Material(
-        //                         child: ListTile(
-        //                           title: const Text('ListTile with Hero'),
-        //                           subtitle: const Text('Tap here to go back'),
-        //                           tileColor: Colors.blue[700],
-        //                           onTap: () {
-        //                             Navigator.pop(context);
-        //                           },
-        //                         ),
-        //                       ),
-        //                     ),
-        //                   ),
-        //                 );
-        //               }),
-        //             );
-        //           },
-        //         ),
-        //       ),
-        //     );
-        //
-        //     //   ListTile(
-        //     //   title: Text(job['title'] ?? ''),
-        //     //   subtitle: Text('Created by: ${job['userId']}'),
-        //     //   // Add more job details as needed
-        //     // );
-        //   },
-        // );
+
       },
     );
   }
-
 
 
 }

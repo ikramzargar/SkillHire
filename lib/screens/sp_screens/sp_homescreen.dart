@@ -10,7 +10,7 @@ class SpHome extends StatefulWidget {
 }
 
 class _SpHomeState extends State<SpHome> {
-  bool status = true; // Default value for Switch
+  bool status = true;
   late FirebaseFirestore _firestore;
   late DocumentReference _docRef;
 
@@ -21,11 +21,10 @@ class _SpHomeState extends State<SpHome> {
     String? userId = getCurrentUserId();
     if (userId != null) {
       _docRef = _firestore.collection('spdata').doc(userId);
-      // Retrieve initial value from Firestore and update local state
       _docRef.get().then((docSnapshot) {
         if (docSnapshot.exists) {
           setState(() {
-            status = docSnapshot['available'] ?? true; // Use Firestore value or default to true
+            status = docSnapshot['available'] ?? true;
           });
         }
       });
@@ -39,15 +38,13 @@ class _SpHomeState extends State<SpHome> {
 
   void _updateSwitchState(bool newValue) {
     setState(() {
-      status = newValue; // Update local state
+      status = newValue;
     });
 
-    // Update Firestore document with new value
     _docRef.set({'available': newValue}, SetOptions(merge: true)).then((_) {
       print('Switch state updated in Firestore');
     }).catchError((error) {
       print('Failed to update switch state: $error');
-      // Handle error
     });
   }
 
@@ -113,11 +110,23 @@ class _SpHomeState extends State<SpHome> {
               ),
             ),
           ),
-          SizedBox(height: 20,),
-          Center(child: Text('My Ratings', style: TextStyle(fontSize: 30),),),
+          SizedBox(
+            height: 20,
+          ),
+          Center(
+            child: Text(
+              'My Ratings',
+              style: TextStyle(fontSize: 30),
+            ),
+          ),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 60),
-            child: Center(child: Text('No ratings yet!',style: TextStyle(fontSize: 20),),),
+            child: Center(
+              child: Text(
+                'No ratings yet!',
+                style: TextStyle(fontSize: 20),
+              ),
+            ),
           )
         ],
       ),

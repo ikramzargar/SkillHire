@@ -4,10 +4,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:skill_hire/globals/app_Colors.dart';
 import 'package:skill_hire/screens/sp_form.dart';
-import 'package:skill_hire/screens/userHomePage.dart';
+
 import 'package:skill_hire/screens/user_form.dart';
 import 'login.dart';
-import 'spHomePage.dart';
 
 class Register extends StatefulWidget {
   @override
@@ -15,7 +14,6 @@ class Register extends StatefulWidget {
 }
 
 class _RegisterState extends State<Register> {
-
   bool showProgress = false;
   bool visible = false;
 

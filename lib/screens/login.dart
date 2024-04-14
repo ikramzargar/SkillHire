@@ -1,13 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:skill_hire/screens/sp_form.dart';
+
 import 'package:skill_hire/screens/sp_homepage.dart';
-import 'package:skill_hire/screens/user_form.dart';
+
 import 'package:skill_hire/screens/user_homepage.dart';
 import '../globals/app_Colors.dart';
-import 'spHomePage.dart';
-import 'userHomePage.dart';
+
 import 'register.dart';
 
 class LoginPage extends StatefulWidget {
@@ -24,7 +23,6 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
-  // final _auth = FirebaseAuth.instance;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,7 +40,9 @@ class _LoginPageState extends State<LoginPage> {
                 child: Image.asset('images/logo.png', fit: BoxFit.cover),
               ),
             ),
-            const SizedBox(height: 50,),
+            const SizedBox(
+              height: 50,
+            ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 30),
               child: Container(
@@ -56,7 +56,9 @@ class _LoginPageState extends State<LoginPage> {
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: Column(
                       children: [
-                        const SizedBox(height: 10,),
+                        const SizedBox(
+                          height: 10,
+                        ),
                         const Text(
                           "Login",
                           style: TextStyle(
@@ -96,7 +98,8 @@ class _LoginPageState extends State<LoginPage> {
                               });
                               return "Email cannot be empty";
                             }
-                            if (!RegExp("^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+.[a-z]")
+                            if (!RegExp(
+                                    "^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+.[a-z]")
                                 .hasMatch(value)) {
                               setState(() {
                                 visible = false;
@@ -177,7 +180,8 @@ class _LoginPageState extends State<LoginPage> {
                             setState(() {
                               visible = true;
                             });
-                            signIn(emailController.text, passwordController.text);
+                            signIn(
+                                emailController.text, passwordController.text);
                           },
                           color: Colors.white,
                           child: const Text(
@@ -205,29 +209,39 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
             ),
-            const SizedBox(height: 20,),
+            const SizedBox(
+              height: 20,
+            ),
             Center(
               child: Column(
-                // mainAxisAlignment: MainAxisAlignment.center,
-                // crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                 Row(
-                   mainAxisAlignment: MainAxisAlignment.center,
-                   children: [
-                     const Text('New User ?, ',style: TextStyle(color: Colors.white,fontSize: 25),),
-                     InkWell(
-                       child: const Text('Register Now.',style: TextStyle(color: Colors.black,fontSize: 25,decoration: TextDecoration.underline,),),
-                       onTap: () {
-                         Navigator.pushReplacement(
-                           context,
-                           MaterialPageRoute(
-                             builder: (context) => Register(),
-                           ),
-                         );
-                       },
-                     ),
-                   ],
-                 ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text(
+                        'New User ?, ',
+                        style: TextStyle(color: Colors.white, fontSize: 25),
+                      ),
+                      InkWell(
+                        child: const Text(
+                          'Register Now.',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 25,
+                            decoration: TextDecoration.underline,
+                          ),
+                        ),
+                        onTap: () {
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => Register(),
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
                 ],
               ),
             ),
@@ -263,11 +277,12 @@ class _LoginPageState extends State<LoginPage> {
       }
     });
   }
- void signIn(String email, String password) async {
+
+  void signIn(String email, String password) async {
     if (_formkey.currentState!.validate()) {
       try {
         setState(() {
-          visible = true; // Show spinner when the sign-in process starts
+          visible = true;
         });
         await FirebaseAuth.instance.signInWithEmailAndPassword(
           email: email,
@@ -278,19 +293,23 @@ class _LoginPageState extends State<LoginPage> {
       } on FirebaseAuthException {
         setState(() {
           _showDialog(context);
-          visible = false; // Hide spinner in case of authentication failure
+          visible = false;
         });
       }
     }
   }
-  void _showDialog(BuildContext context, ) {
+
+  void _showDialog(
+    BuildContext context,
+  ) {
     showDialog(
       barrierDismissible: false,
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Error'),
-          content: const Text('Email not found/ Email and password does not match'),
+          content:
+              const Text('Email not found/ Email and password does not match'),
           actions: <Widget>[
             TextButton(
               child: const Text('Retry'),
@@ -303,6 +322,4 @@ class _LoginPageState extends State<LoginPage> {
       },
     );
   }
-
 }
-

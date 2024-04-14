@@ -6,7 +6,7 @@ class ServiceProviderData {
   String profession;
   String experience;
   String rate;
-  String userId; // This can be the Firebase user ID
+  String userId;
   double latitude;
   double longitude;
 
