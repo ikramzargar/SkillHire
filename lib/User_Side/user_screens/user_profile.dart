@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import '../../screens/login.dart';
+
 class UserProfile extends StatefulWidget {
   const UserProfile({Key? key}) : super(key: key);
 
@@ -84,7 +86,11 @@ class _UserProfileState extends State<UserProfile> {
           SizedBox(height: 30),
           Center(
             child: MaterialButton(
-              onPressed: () {},
+              onPressed: () {
+                setState(() {
+                  logout(context);
+                });
+              },
               child: Text('Log Out', style: TextStyle(fontSize: 25)),
               color: Colors.green,
             ),
@@ -124,6 +130,16 @@ class _UserProfileState extends State<UserProfile> {
             ),
           ),
         ],
+      ),
+    );
+  }
+  Future<void> logout(BuildContext context) async {
+    CircularProgressIndicator();
+    await FirebaseAuth.instance.signOut();
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => LoginPage(),
       ),
     );
   }

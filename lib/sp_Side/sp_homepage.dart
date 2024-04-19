@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
-import 'package:skill_hire/screens/sp_screens/sp_homescreen.dart';
-import 'package:skill_hire/screens/sp_screens/sp_jobs_screen.dart';
-import 'package:skill_hire/screens/sp_screens/sp_profile.dart';
+import 'package:skill_hire/sp_Side/sp_screens/sp_homescreen.dart';
+import 'package:skill_hire/sp_Side/sp_screens/sp_jobs_screen.dart';
+import 'package:skill_hire/sp_Side/sp_screens/sp_profile.dart';
 
 class SpHomePage extends StatefulWidget {
   const SpHomePage({super.key});

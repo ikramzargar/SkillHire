@@ -2,9 +2,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import 'package:skill_hire/screens/sp_homepage.dart';
+import 'package:skill_hire/sp_Side/sp_homepage.dart';
 
-import 'package:skill_hire/screens/user_homepage.dart';
+import 'package:skill_hire/User_Side/user_homepage.dart';
 import '../globals/app_Colors.dart';
 
 import 'register.dart';

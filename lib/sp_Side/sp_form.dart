@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:skill_hire/globals/app_textStyle.dart';
 import 'package:skill_hire/location_service.dart';
-import 'package:skill_hire/screens/sp_homepage.dart';
+import 'package:skill_hire/sp_Side/sp_homepage.dart';
 
 class SpForm extends StatefulWidget {
   const SpForm({Key? key}) : super(key: key);

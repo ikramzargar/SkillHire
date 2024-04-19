@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
-import 'user_screens/user_homescreen.dart';
-import 'user_screens/user_profile.dart';
-import 'user_screens/user_providers_screen.dart';
+import 'package:skill_hire/User_Side/user_screens/user_homescreen.dart';
+import 'package:skill_hire/User_Side/user_screens/user_providers_screen.dart';
+import 'package:skill_hire/User_Side/user_screens/user_profile.dart';
 
 class UserHomePage extends StatefulWidget {
   const UserHomePage({super.key});

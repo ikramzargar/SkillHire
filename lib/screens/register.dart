@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:skill_hire/globals/app_Colors.dart';
-import 'package:skill_hire/screens/sp_form.dart';
+import 'package:skill_hire/sp_Side/sp_form.dart';
 
 import 'package:skill_hire/screens/user_form.dart';
 import 'login.dart';

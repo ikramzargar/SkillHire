@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:skill_hire/globals/app_textStyle.dart';
 import 'package:skill_hire/location_service.dart';
-import 'package:skill_hire/screens/user_homepage.dart';
+import 'package:skill_hire/User_Side/user_homepage.dart';
 
 class UserForm extends StatefulWidget {
   const UserForm({Key? key}) : super(key: key);
