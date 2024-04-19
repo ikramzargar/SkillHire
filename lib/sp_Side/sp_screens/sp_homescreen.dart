@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:skill_hire/globals/app_Colors.dart';
+import 'package:skill_hire/globals/app_textStyle.dart';
 
 class SpHome extends StatefulWidget {
   const SpHome({super.key});
@@ -72,21 +74,14 @@ class _SpHomeState extends State<SpHome> {
               style: TextStyle(fontSize: 30),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              'Click on the button to toggle availability.',
-              style: TextStyle(fontSize: 25),
-            ),
-          ),
           SizedBox(
-            height: 30,
+            height: 10,
           ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Container(
               decoration: BoxDecoration(
-                  color: Colors.green, borderRadius: BorderRadius.circular(10)),
+                  color: AppColors.mainBgColor2, borderRadius: BorderRadius.circular(10)),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
@@ -99,7 +94,7 @@ class _SpHomeState extends State<SpHome> {
                   ),
                   Switch(
                     value: status,
-                    activeColor: Colors.red,
+                    activeColor: AppColors.otherColor,
                     onChanged: (bool value) {
                       setState(() {
                         _updateSwitchState(value);
@@ -110,6 +105,14 @@ class _SpHomeState extends State<SpHome> {
               ),
             ),
           ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              'Click on the button to toggle availability.',
+              style: AppTextStyles.normalText1().copyWith(fontSize: 20),
+            ),
+          ),
+
           SizedBox(
             height: 20,
           ),

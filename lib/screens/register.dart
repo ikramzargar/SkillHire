@@ -3,7 +3,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:skill_hire/globals/app_Colors.dart';
+import 'package:skill_hire/globals/app_textStyle.dart';
 import 'package:skill_hire/sp_Side/sp_form.dart';
+
 
 import 'package:skill_hire/screens/user_form.dart';
 import 'login.dart';
@@ -32,34 +34,39 @@ class _RegisterState extends State<Register> {
     'User',
     'Service Provider',
   ];
-  var _currentItemSelected = "User";
+   var _currentItemSelected = "User";
   var role = "User";
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.mainColor,
+      backgroundColor: AppColors.mainBgColor,
       body: SingleChildScrollView(
         keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-        padding: const EdgeInsetsDirectional.only(top: 60),
+        padding: const EdgeInsetsDirectional.only(top: 10),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            ClipRRect(
-              borderRadius: BorderRadius.circular(20), // Image border
-              child: SizedBox.fromSize(
-                size: const Size.fromRadius(60), // Image radius
-                child: Image.asset('images/logo.png', fit: BoxFit.cover),
-              ),
-            ),
-            const SizedBox(
-              height: 50,
-            ),
+            Center(
+                child: Image.asset(
+              'images/logo.png',
+              scale: 1.5,
+            ),),
+            // ClipRRect(
+            //   borderRadius: BorderRadius.circular(20), // Image border
+            //   child: SizedBox.fromSize(
+            //     size: const Size.fromRadius(60), // Image radius
+            //     child: Image.asset('images/logo.png', fit: BoxFit.cover),
+            //   ),
+            // ),
+            // const SizedBox(
+            //   height: 10,
+            // ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 30),
               child: Container(
                 decoration: BoxDecoration(
-                  color: Colors.grey,
+                  color: AppColors.mainBgColor2,
                   borderRadius: BorderRadius.circular(30),
                 ),
                 child: Form(
@@ -68,13 +75,9 @@ class _RegisterState extends State<Register> {
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: Column(
                       children: [
-                        const Text(
+                        Text(
                           "Register",
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                            fontSize: 40,
-                          ),
+                          style: AppTextStyles.heading2white(),
                         ),
                         const SizedBox(
                           height: 10,
@@ -217,7 +220,7 @@ class _RegisterState extends State<Register> {
                                 color: Colors.white,
                               ),
                               child: DropdownButton<String>(
-                                dropdownColor: Colors.green,
+                                dropdownColor: AppColors.mainBgColor2,
                                 isDense: true,
                                 iconEnabledColor: Colors.black,
                                 focusColor: Colors.black,
@@ -240,7 +243,7 @@ class _RegisterState extends State<Register> {
                                 onChanged: (newValueSelected) {
                                   setState(() {
                                     _currentItemSelected = newValueSelected!;
-                                    role = newValueSelected;
+                                    role = newValueSelected!;
                                   });
                                 },
                                 value: _currentItemSelected,
@@ -299,18 +302,16 @@ class _RegisterState extends State<Register> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Text(
+                      Text(
                         'Have an account ?, ',
-                        style: TextStyle(color: Colors.white, fontSize: 25),
+                        style: AppTextStyles.normalText1(),
                       ),
                       InkWell(
-                        child: const Text(
+                        child: Text(
                           'login.',
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 25,
-                            decoration: TextDecoration.underline,
-                          ),
+                          style: AppTextStyles.normalText1().copyWith(
+                              color: Colors.blueAccent,
+                              decoration: TextDecoration.underline),
                         ),
                         onTap: () {
                           const CircularProgressIndicator();
@@ -326,6 +327,9 @@ class _RegisterState extends State<Register> {
                   ),
                 ],
               ),
+            ),
+            SizedBox(
+              height: 20,
             ),
           ],
         ),

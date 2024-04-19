@@ -1,5 +1,6 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
+import 'package:skill_hire/globals/app_Colors.dart';
 import 'package:skill_hire/globals/app_textStyle.dart';
 import 'register.dart';
 
@@ -14,11 +15,14 @@ class _IntroScreenState extends State<IntroScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.mainBgColor,
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          SizedBox(
+            height: 10,
+          ),
           Center(
             child: RichText(
               text: TextSpan(
@@ -27,8 +31,7 @@ class _IntroScreenState extends State<IntroScreen> {
                 children: [
                   TextSpan(
                     text: 'Hire',
-                    style:
-                        AppTextStyles.heading1().copyWith(color: Colors.green),
+                    style: AppTextStyles.heading1blue(),
                   ),
                 ],
               ),
@@ -48,21 +51,15 @@ class _IntroScreenState extends State<IntroScreen> {
               animatedTexts: [
                 TyperAnimatedText(
                   'Fast',
-                  textStyle: AppTextStyles.heading1().copyWith(
-                    color: Colors.green,
-                  ),
+                  textStyle: AppTextStyles.heading1blue(),
                 ),
                 TyperAnimatedText(
                   'Reliable',
-                  textStyle: AppTextStyles.heading1().copyWith(
-                    color: Colors.green,
-                  ),
+                  textStyle: AppTextStyles.heading1blue(),
                 ),
                 TyperAnimatedText(
                   'Secure',
-                  textStyle: AppTextStyles.heading1().copyWith(
-                    color: Colors.green,
-                  ),
+                  textStyle: AppTextStyles.heading1blue(),
                 ),
               ],
               pause: const Duration(milliseconds: 1000),
@@ -76,7 +73,7 @@ class _IntroScreenState extends State<IntroScreen> {
           ),
           Center(
             child: MaterialButton(
-              color: Colors.green,
+              color: AppColors.buttonColor1,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20),
               ),
@@ -94,6 +91,9 @@ class _IntroScreenState extends State<IntroScreen> {
                 ),
               ),
             ),
+          ),
+          SizedBox(
+            height: 10,
           ),
         ],
       ),

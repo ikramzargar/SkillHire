@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:skill_hire/globals/app_textStyle.dart';
 
 import 'package:skill_hire/sp_Side/sp_homepage.dart';
 
@@ -26,28 +27,27 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.mainColor,
+      backgroundColor: AppColors.mainBgColor,
       body: SingleChildScrollView(
         keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-        padding: const EdgeInsetsDirectional.only(top: 60),
+        padding: const EdgeInsetsDirectional.only(top: 20),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            ClipRRect(
-              borderRadius: BorderRadius.circular(20), // Image border
-              child: SizedBox.fromSize(
-                size: const Size.fromRadius(60), // Image radius
-                child: Image.asset('images/logo.png', fit: BoxFit.cover),
+            Center(
+              child: Image.asset(
+                'images/logo.png',
+                scale: 2,
               ),
             ),
             const SizedBox(
-              height: 50,
+              height: 10,
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 30),
               child: Container(
                 decoration: BoxDecoration(
-                  color: Colors.grey,
+                  color: AppColors.mainBgColor2,
                   borderRadius: BorderRadius.circular(30),
                 ),
                 child: Form(
@@ -59,19 +59,12 @@ class _LoginPageState extends State<LoginPage> {
                         const SizedBox(
                           height: 10,
                         ),
-                        const Text(
+                        Text(
                           "Login",
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                            fontSize: 40,
-                          ),
+                          style: AppTextStyles.heading2white(),
                         ),
                         const SizedBox(
                           height: 30,
-                        ),
-                        const SizedBox(
-                          height: 20,
                         ),
                         TextFormField(
                           controller: emailController,
@@ -218,19 +211,16 @@ class _LoginPageState extends State<LoginPage> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Text(
+                      Text(
                         'New User ?, ',
-                        style: TextStyle(color: Colors.white, fontSize: 25),
+                        style: AppTextStyles.normalText1(),
                       ),
                       InkWell(
-                        child: const Text(
-                          'Register Now.',
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 25,
-                            decoration: TextDecoration.underline,
-                          ),
-                        ),
+                        child: Text('Register Now.',
+                            style: AppTextStyles.normalText1().copyWith(
+                              color: Colors.blueAccent,
+                              decoration: TextDecoration.underline,
+                            )),
                         onTap: () {
                           Navigator.pushReplacement(
                             context,
@@ -270,7 +260,7 @@ class _LoginPageState extends State<LoginPage> {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-              builder: (context) => const SpHomePage(),
+              builder: (context) => const SpMainPage(),
             ),
           );
         }

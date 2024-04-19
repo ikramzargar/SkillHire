@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
+import 'package:skill_hire/globals/app_Colors.dart';
+import 'package:skill_hire/globals/app_textStyle.dart';
 import 'package:skill_hire/sp_Side/sp_screens/sp_homescreen.dart';
 import 'package:skill_hire/sp_Side/sp_screens/sp_jobs_screen.dart';
 import 'package:skill_hire/sp_Side/sp_screens/sp_profile.dart';
 
-class SpHomePage extends StatefulWidget {
-  const SpHomePage({super.key});
+class SpMainPage extends StatefulWidget {
+  const SpMainPage({super.key});
 
   @override
-  State<SpHomePage> createState() => _SpHomePageState();
+  State<SpMainPage> createState() => _SpMainPageState();
 }
 
-class _SpHomePageState extends State<SpHomePage> {
+class _SpMainPageState extends State<SpMainPage> {
   List<Widget> screenList = [
     SpHome(),
     SpJobs(),
@@ -21,18 +23,19 @@ class _SpHomePageState extends State<SpHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.mainBgColor,
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        backgroundColor: Colors.green,
+        backgroundColor: AppColors.mainBgColor2,
         title: Center(
-          child: Text('SkillHire'),
+          child: Text('SkillHire',style: AppTextStyles.heading2Normal(),),
         ),
       ),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.only(
               topLeft: Radius.circular(20), topRight: Radius.circular(20)),
-          color: Colors.green,
+          color: AppColors.mainBgColor2,
         ),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 20.0),
@@ -43,10 +46,10 @@ class _SpHomePageState extends State<SpHomePage> {
                   homeIndex = index;
                 });
               },
-              backgroundColor: Colors.green,
+              backgroundColor: AppColors.mainBgColor2,
               color: Colors.white,
               activeColor: Colors.white,
-              tabBackgroundColor: Colors.grey,
+              tabBackgroundColor: AppColors.buttonColor1,
               gap: 10,
               padding: EdgeInsets.all(16),
               tabs: [

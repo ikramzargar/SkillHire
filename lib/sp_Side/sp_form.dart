@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:skill_hire/globals/app_Colors.dart';
 import 'package:skill_hire/globals/app_textStyle.dart';
 import 'package:skill_hire/location_service.dart';
 import 'package:skill_hire/sp_Side/sp_homepage.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
 
 class SpForm extends StatefulWidget {
   const SpForm({Key? key}) : super(key: key);
@@ -13,15 +15,40 @@ class SpForm extends StatefulWidget {
 }
 
 class _SpFormState extends State<SpForm> {
-  TextEditingController nameController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
   TextEditingController noController = TextEditingController();
   TextEditingController addressController = TextEditingController();
-  TextEditingController professionController = TextEditingController();
-  TextEditingController experienceController = TextEditingController();
   TextEditingController rateController = TextEditingController();
   late double lat;
   late double lon;
-
+  final List<String> professions = [
+    'Plumber',
+    'Electrician',
+    'Carpenter',
+    'Labour',
+    'Engineer',
+    'Cleaner',
+    'Welder',
+    'Mason',
+    'Mechanic',
+  ];
+  String? profession;
+  final List<String> experiences = [
+    '1 year',
+    '2 years',
+    '3 years',
+    '4 years',
+    '5 years',
+    '5+ years',
+  ];
+  String? experience;
+ @override
+  void dispose() {
+   _nameController.dispose();
+   noController.dispose();
+   rateController.dispose();
+    super.dispose();
+  }
   @override
   void initState() {
     super.initState();
@@ -51,8 +78,9 @@ class _SpFormState extends State<SpForm> {
         child: Column(
           children: [
             Container(
-              decoration: const BoxDecoration(
-                color: Colors.green,
+              width: double.maxFinite,
+              decoration: BoxDecoration(
+                color: AppColors.mainBgColor2,
                 borderRadius: BorderRadius.only(
                   bottomLeft: Radius.circular(30),
                   bottomRight: Radius.circular(30),
@@ -62,7 +90,7 @@ class _SpFormState extends State<SpForm> {
                 padding: const EdgeInsets.all(30.0),
                 child: Text(
                   'Let\'s get you started.',
-                  style: AppTextStyles.heading1(),
+                  style: AppTextStyles.heading2Normal(),
                 ),
               ),
             ),
@@ -72,34 +100,144 @@ class _SpFormState extends State<SpForm> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  _buildTextField('Name', nameController),
+                  _buildTextField('Name', _nameController),
+
                   _buildTextField('Mobile No.', noController,
                       keyboardType: TextInputType.number, maxLength: 10),
                   _buildTextField('Address', addressController),
-                  _buildTextField('Profession', professionController),
-                  _buildTextField('Experience (Years)', experienceController,
-                      keyboardType: TextInputType.number, maxLength: 2),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Profession',
+                        style: AppTextStyles.normalText1(),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      DropdownButtonHideUnderline(
+                        child: DropdownButton2<String>(
+                          isExpanded: true,
+                          hint: Text(
+                            'Select Item',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Theme.of(context).hintColor,
+                            ),
+                          ),
+                          items: _addDividersAfterItems(professions),
+                          value: profession,
+                          onChanged: (String? value) {
+                            setState(() {
+                              profession = value!;
+                            });
+                          },
+                          buttonStyleData: ButtonStyleData(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(15),
+                              border: Border.all(color: Colors.black),
+                            ),
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 10),
+                            height: 40,
+                            width: 300,
+                          ),
+                          dropdownStyleData: const DropdownStyleData(
+                            maxHeight: 200,
+                          ),
+                          menuItemStyleData: MenuItemStyleData(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 8.0),
+                            customHeights:
+                                _getCustomItemsHeights(givenlist: professions),
+                          ),
+                          iconStyleData: const IconStyleData(
+                            openMenuIcon: Icon(Icons.arrow_drop_up),
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 15),
+                    ],
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Experience (years)',
+                        style: AppTextStyles.normalText1(),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      DropdownButtonHideUnderline(
+                        child: DropdownButton2<String>(
+                          isExpanded: true,
+                          hint: Text(
+                            'Select Item',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Theme.of(context).hintColor,
+                            ),
+                          ),
+                          items: _addDividersAfterItems(experiences),
+                          value: experience,
+                          onChanged: (String? value) {
+                            setState(() {
+                              experience = value!;
+                            });
+                          },
+                          buttonStyleData: ButtonStyleData(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(15),
+                              border: Border.all(color: Colors.black),
+                            ),
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 10),
+                            height: 40,
+                            width: 300,
+                          ),
+                          dropdownStyleData: const DropdownStyleData(
+                            maxHeight: 200,
+                          ),
+                          menuItemStyleData: MenuItemStyleData(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 8.0),
+                            customHeights:
+                                _getCustomItemsHeights(givenlist: experiences),
+                          ),
+                          iconStyleData: const IconStyleData(
+                            openMenuIcon: Icon(Icons.arrow_drop_up),
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 15),
+                    ],
+                  ),
                   _buildTextField('Rate (Rs/Day)', rateController,
                       keyboardType: TextInputType.number, maxLength: 4),
                 ],
               ),
             ),
-            const SizedBox(height: 30),
+            const SizedBox(height: 10),
             MaterialButton(
               onPressed: () {
                 setState(() {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (BuildContext) => SpHomePage()));
+                          builder: (BuildContext) => SpMainPage()));
                   saveSpData();
                 });
               },
-              color: Colors.green,
+              color: AppColors.buttonColor1,
               child: Text(
                 'Save',
-                style: TextStyle(fontSize: 25),
+                style: AppTextStyles.normalText1(),
               ),
+              shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(20.0))),
+              elevation: 1,
+              height: 40,
             ),
             const SizedBox(height: 30),
           ],
@@ -115,13 +253,13 @@ class _SpFormState extends State<SpForm> {
       children: [
         Text(
           label,
-          style: TextStyle(fontSize: 30),
+          style: AppTextStyles.normalText1(),
         ),
         TextField(
           controller: controller,
           keyboardType: keyboardType,
           maxLength: maxLength,
-          style: TextStyle(fontSize: 20),
+          style: AppTextStyles.textfieldStyle1(),
           decoration: InputDecoration(
             filled: true,
             fillColor: Colors.white,
@@ -130,7 +268,7 @@ class _SpFormState extends State<SpForm> {
             ),
           ),
         ),
-        SizedBox(height: 30),
+        SizedBox(height: 15),
       ],
     );
   }
@@ -143,15 +281,12 @@ class _SpFormState extends State<SpForm> {
         String? userEmail = user.email;
         bool availability = true;
 
-        await FirebaseFirestore.instance
-            .collection('spdata')
-            .doc(userId)
-            .set({
-          'name': nameController.text,
+        await FirebaseFirestore.instance.collection('spdata').doc(userId).set({
+          'name': _nameController.text,
           'mobileNo': noController.text,
           'address': addressController.text,
-          'profession': professionController.text,
-          'experience': experienceController.text,
+          'profession': profession,
+          'experience': experience,
           'rate': rateController.text,
           'userId': userId,
           'latitude': lat,
@@ -160,7 +295,7 @@ class _SpFormState extends State<SpForm> {
           'available': availability,
         });
         print('User data saved successfully!');
-            } else {
+      } else {
         print('No user is currently signed in.');
       }
     } catch (e) {
@@ -168,5 +303,50 @@ class _SpFormState extends State<SpForm> {
     }
   }
 
+  List<DropdownMenuItem<String>> _addDividersAfterItems(List<String> items) {
+    final List<DropdownMenuItem<String>> menuItems = [];
+    for (final String item in items) {
+      menuItems.addAll(
+        [
+          DropdownMenuItem<String>(
+            value: item,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: Text(
+                item,
+                style: const TextStyle(
+                  fontSize: 14,
+                ),
+              ),
+            ),
+          ),
+          //If it's last item, we will not add Divider after it.
+          if (item != items.last)
+            const DropdownMenuItem<String>(
+              enabled: false,
+              child: Divider(),
+            ),
+        ],
+      );
+    }
+    return menuItems;
+  }
 
+  List<double> _getCustomItemsHeights({required List<String> givenlist}) {
+    final List<double> itemsHeights = [];
+    for (int i = 0; i < (givenlist.length * 2) - 1; i++) {
+      if (i.isEven) {
+        itemsHeights.add(40);
+      }
+      //Dividers indexes will be the odd indexes
+      if (i.isOdd) {
+        itemsHeights.add(4);
+      }
+    }
+    return itemsHeights;
+  }
+  bool isValidPhoneNumber(String input) {
+    // Basic phone number validation (accepts 10 digits)
+    return input.length == 10 && int.tryParse(input) != null;
+  }
 }

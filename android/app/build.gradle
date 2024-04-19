@@ -27,6 +27,7 @@ android {
     namespace "com.ikramzargar.skill_hire"
     compileSdkVersion flutter.compileSdkVersion
     ndkVersion flutter.ndkVersion
+    compileSdkVersion 34
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -38,9 +39,10 @@ android {
         applicationId "com.ikramzargar.skill_hire"
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
-        minSdkVersion 21
+        minSdkVersion 20
         targetSdkVersion 30
         compileSdkVersion 33
+        multiDexEnabled true
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
     }
