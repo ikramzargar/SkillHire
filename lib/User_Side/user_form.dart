@@ -5,6 +5,8 @@ import 'package:skill_hire/globals/app_textStyle.dart';
 import 'package:skill_hire/location_service.dart';
 import 'package:skill_hire/User_Side/user_homepage.dart';
 
+import '../globals/app_Colors.dart';
+
 class UserForm extends StatefulWidget {
   const UserForm({Key? key}) : super(key: key);
 
@@ -48,8 +50,9 @@ class _UserFormState extends State<UserForm> {
         child: Column(
           children: [
             Container(
-              decoration: const BoxDecoration(
-                color: Colors.green,
+              width: double.maxFinite,
+              decoration: BoxDecoration(
+                color: AppColors.mainBgColor2,
                 borderRadius: BorderRadius.only(
                   bottomLeft: Radius.circular(30),
                   bottomRight: Radius.circular(30),
@@ -59,7 +62,7 @@ class _UserFormState extends State<UserForm> {
                 padding: const EdgeInsets.all(30.0),
                 child: Text(
                   'Let\'s get you started.',
-                  style: AppTextStyles.heading1(),
+                  style: AppTextStyles.heading2Normal(),
                 ),
               ),
             ),
@@ -89,11 +92,15 @@ class _UserFormState extends State<UserForm> {
                           builder: (BuildContext) => UserHomePage()));
                 });
               },
-              color: Colors.green,
+              color: AppColors.buttonColor1,
               child: Text(
                 'Save',
-                style: TextStyle(fontSize: 25),
+                style: AppTextStyles.normalText1(),
               ),
+              shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(20.0))),
+              elevation: 1,
+              height: 40,
             ),
           ],
         ),
@@ -108,13 +115,13 @@ class _UserFormState extends State<UserForm> {
       children: [
         Text(
           label,
-          style: TextStyle(fontSize: 30),
+          style: AppTextStyles.normalText1(),
         ),
         TextField(
           controller: controller,
           keyboardType: keyboardType,
           maxLength: maxLength,
-          style: TextStyle(fontSize: 20),
+          style: AppTextStyles.textfieldStyle1(),
           decoration: InputDecoration(
             filled: true,
             fillColor: Colors.white,
@@ -123,7 +130,7 @@ class _UserFormState extends State<UserForm> {
             ),
           ),
         ),
-        SizedBox(height: 30),
+        SizedBox(height: 15),
       ],
     );
   }

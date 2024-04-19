@@ -37,7 +37,7 @@ class _LoginPageState extends State<LoginPage> {
             Center(
               child: Image.asset(
                 'images/logo.png',
-                scale: 2,
+                scale: 1.5,
               ),
             ),
             const SizedBox(

@@ -4,7 +4,7 @@ import 'package:skill_hire/screens/intro.dart';
 import 'package:skill_hire/screens/maps_screen.dart';
 import 'package:skill_hire/sp_Side/sp_form.dart';
 import 'package:skill_hire/sp_Side/sp_homepage.dart';
-import 'package:skill_hire/screens/user_form.dart';
+import 'package:skill_hire/User_Side/user_form.dart';
 import 'package:skill_hire/User_Side/user_homepage.dart';
 
 void main() async{

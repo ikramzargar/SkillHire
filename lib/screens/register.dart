@@ -7,7 +7,7 @@ import 'package:skill_hire/globals/app_textStyle.dart';
 import 'package:skill_hire/sp_Side/sp_form.dart';
 
 
-import 'package:skill_hire/screens/user_form.dart';
+import 'package:skill_hire/User_Side/user_form.dart';
 import 'login.dart';
 
 class Register extends StatefulWidget {
