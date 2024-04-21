@@ -4,7 +4,7 @@ class Job {
   String title;
   String description;
   String userId;
-   String requirment;
+   String? requirment;
    String rate;
   String adress;
   String createdby;
@@ -33,7 +33,9 @@ class FirestoreService {
   FirebaseFirestore.instance.collection('jobs');
 
   Future<void> createJob(Job job) async {
-    await jobsCollection.add({
+    DocumentReference jobRef = FirebaseFirestore.instance.collection('jobs').doc(); // Generate a new document reference
+
+    await jobRef.set({
       'title': job.title,
       'description': job.description,
       'userId': job.userId,
@@ -44,7 +46,10 @@ class FirestoreService {
       'mobile': job.mobile,
       'lat': job.lat,
       'lon': job.lon,
+      'documentId': jobRef.id, // Store the document ID within the document itself
     });
+
+    print('New job created with document ID: ${jobRef.id}');
   }
 
 }

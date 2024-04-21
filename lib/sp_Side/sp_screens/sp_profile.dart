@@ -107,6 +107,7 @@ class _SpProfileState extends State<SpProfile> {
                 child: Text('Edit', style: TextStyle(fontSize: 25)),
                 color: AppColors.buttonColor1,
               ),
+              SizedBox(width: 10,),
               MaterialButton(
                 onPressed: () {
                   setState(() {
