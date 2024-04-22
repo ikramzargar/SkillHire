@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'globals/app_Colors.dart';
 import 'globals/app_textStyle.dart';
 import 'models/job_model.dart';
@@ -33,6 +34,8 @@ class _JobCreationFormState extends State<JobCreationForm> {
     'Mechanic',
   ];
   String? profession;
+  final _formKey = GlobalKey<FormState>(); // Form key for validation
+
   @override
   void initState() {
     fetchUserData();
@@ -41,126 +44,143 @@ class _JobCreationFormState extends State<JobCreationForm> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        TextField(
-          controller: titleController,
-          decoration: InputDecoration(labelText: 'Job Title'),
-        ),
-        SizedBox(
-          height: 10,
-        ),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+    return SingleChildScrollView(
+      child: Form(
+        key: _formKey,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Text(
-              'Profession',
-              style: TextStyle(fontSize: 18),
-              // style: AppTextStyles.normalText1(),
+            TextFormField(
+              controller: titleController,
+              decoration: InputDecoration(labelText: 'Job Title'),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter a job title';
+                }
+                return null;
+              },
             ),
             SizedBox(
               height: 10,
             ),
-            DropdownButtonHideUnderline(
-              child: DropdownButton2<String>(
-                isExpanded: true,
-                hint: Text(
-                  'Select Item',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Theme.of(context).hintColor,
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Profession',
+                  style: TextStyle(fontSize: 18),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                DropdownButtonHideUnderline(
+                  child: DropdownButton2<String>(
+                    isExpanded: true,
+                    hint: Text(
+                      'Select Item',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Theme.of(context).hintColor,
+                      ),
+                    ),
+                    items: _addDividersAfterItems(professions),
+                    value: profession,
+                    onChanged: (String? value) {
+                      setState(() {
+                        profession = value!;
+                      });
+                    },
+                    buttonStyleData: ButtonStyleData(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(15),
+                        border: Border.all(color: Colors.black),
+                      ),
+                      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                      height: 40,
+                      width: 300,
+                    ),
+                    dropdownStyleData: const DropdownStyleData(
+                      maxHeight: 200,
+                    ),
+                    menuItemStyleData: MenuItemStyleData(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      customHeights: _getCustomItemsHeights(givenlist: professions),
+                    ),
+                    iconStyleData: const IconStyleData(
+                      openMenuIcon: Icon(Icons.arrow_drop_up),
+                    ),
                   ),
                 ),
-                items: _addDividersAfterItems(professions),
-                value: profession,
-                onChanged: (String? value) {
-                  setState(() {
-                    profession = value!;
-                  });
-                },
-                buttonStyleData: ButtonStyleData(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(15),
-                    border: Border.all(color: Colors.black),
-                  ),
-                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                  height: 40,
-                  width: 300,
-                ),
-                dropdownStyleData: const DropdownStyleData(
-                  maxHeight: 200,
-                ),
-                menuItemStyleData: MenuItemStyleData(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  customHeights: _getCustomItemsHeights(givenlist: professions),
-                ),
-                iconStyleData: const IconStyleData(
-                  openMenuIcon: Icon(Icons.arrow_drop_up),
-                ),
-              ),
+                SizedBox(height: 10),
+              ],
             ),
-            SizedBox(height: 10),
-          ],
-        ),
-        TextField(
-          controller: descriptionController,
-          decoration: InputDecoration(labelText: 'Job Description'),
-          maxLines: 1,
-        ),
-        TextField(
-          controller: rateController,
-          decoration: InputDecoration(labelText: 'Expected rate (Rs/day)'),
-        ),
-        SizedBox(
-          height: 20,
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            MaterialButton(
-              onPressed: () {
-                setState(() {
-                  Navigator.of(context).pop();
-                });
+            TextFormField(
+              controller: descriptionController,
+              decoration: InputDecoration(labelText: 'Job Description'),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter a job description';
+                }
+                return null;
               },
-              child: Text('Cancel', style: TextStyle(fontSize: 20)),
-              color: AppColors.buttonColor1,
-              shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(20.0))),
-              elevation: 5.0,
+              maxLines: 1,
             ),
-            SizedBox(width: 20,),
-            MaterialButton(
-              onPressed: () {
-                final jobTitle = titleController.text;
-                final jobDescription = descriptionController.text;
-               // final jobRequirment = requirmentController.text;
-                final jobRate = rateController.text;
-                FirestoreService().createJob(Job(
-                  title: jobTitle,
-                  description: jobDescription,
-                  userId: userId,
-                  requirment: profession,
-                  rate: jobRate,
-                  createdby: name,
-                  mobile: mobileNum,
-                  adress: adress,
-                  lat: lat,
-                  lon: lon,
-                ),);
+            TextFormField(
+              controller: rateController,
+              decoration: InputDecoration(labelText: 'Expected rate (Rs/day)'),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter the expected rate';
+                }
+                // Validate if the entered value is numeric
+                if (double.tryParse(value) == null) {
+                  return 'Please enter a valid numeric value';
+                }
 
-                Navigator.of(context).pop();
+                return null;
               },
-              child: Text('Save', style: TextStyle(fontSize: 20)),
-              color: AppColors.buttonColor1,
-              shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(20.0))),
-              elevation: 5.0,
+              maxLength: 4,
+              keyboardType: TextInputType.number,
+              inputFormatters: <TextInputFormatter>[
+                FilteringTextInputFormatter.allow(RegExp(r'[0-9]')), // Allow only digits
+              ],
+            ),
+
+            SizedBox(
+              height: 20,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                MaterialButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('Cancel', style: TextStyle(fontSize: 20)),
+                  color: AppColors.buttonColor1,
+                  shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(20.0))),
+                  elevation: 5.0,
+                ),
+                SizedBox(width: 20,),
+                MaterialButton(
+                  onPressed: () {
+                    if (_formKey.currentState!.validate()) {
+                      // Form is valid, proceed with saving the job
+                      saveJob();
+                    }
+                  },
+                  child: Text('Save', style: TextStyle(fontSize: 20)),
+                  color: AppColors.buttonColor1,
+                  shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(20.0))),
+                  elevation: 5.0,
+                ),
+              ],
             ),
           ],
         ),
-      ],
+      ),
     );
   }
 
@@ -210,7 +230,7 @@ class _JobCreationFormState extends State<JobCreationForm> {
               ),
             ),
           ),
-          //If it's last item, we will not add Divider after it.
+          // If it's not the last item, add a divider
           if (item != items.last)
             const DropdownMenuItem<String>(
               enabled: false,
@@ -233,5 +253,24 @@ class _JobCreationFormState extends State<JobCreationForm> {
       }
     }
     return itemsHeights;
+  }
+
+  void saveJob() {
+    final jobTitle = titleController.text;
+    final jobDescription = descriptionController.text;
+    final jobRate = rateController.text;
+    FirestoreService().createJob(Job(
+      title: jobTitle,
+      description: jobDescription,
+      userId: userId,
+      requirment: profession,
+      rate: jobRate,
+      createdby: name,
+      mobile: mobileNum,
+      adress: adress,
+      lat: lat,
+      lon: lon,
+    ));
+    Navigator.of(context).pop();
   }
 }

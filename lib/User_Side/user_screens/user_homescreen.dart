@@ -1,3 +1,4 @@
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -17,9 +18,8 @@ class _UserHomeState extends State<UserHome> {
   String userId = '';
 
   TextEditingController _titleController = TextEditingController();
+  TextEditingController _rateController = TextEditingController();
   TextEditingController _descriptionController = TextEditingController();
-
-  String? updatedRequirment;
   @override
   void initState() {
     super.initState();
@@ -171,6 +171,7 @@ class _UserHomeState extends State<UserHome> {
                                                             TextButton(
                                                               onPressed: () {
                                                                 _titleController.text = job['title'];
+                                                                _rateController.text = job['rate'];
                                                                 _descriptionController.text = job['description'];
                                                                 Navigator.pop(
                                                                     context); // Close dialog
@@ -445,7 +446,6 @@ class _UserHomeState extends State<UserHome> {
   }
   void showEditDialog(BuildContext context , String docId) {
 
-
     showDialog(
       context: context,
       builder: (context) {
@@ -455,25 +455,34 @@ class _UserHomeState extends State<UserHome> {
             'Edit Profile',
             style: AppTextStyles.heading2Normal(),
           ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller:_titleController,
-                decoration: InputDecoration(
-                    labelText: 'Title', labelStyle: AppTextStyles.normalText1()),
-                style: AppTextStyles.normalText1(),
-              ),
-              TextField(
-                controller: _descriptionController,
-                decoration: InputDecoration(
-                    labelText: 'Description',
-                    labelStyle: AppTextStyles.normalText1()),
-                style: AppTextStyles.normalText1(),
-                // keyboardType: TextInputType.phone,
-                // maxLength: 10,
-              ),
-            ],
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller:_titleController,
+                  decoration: InputDecoration(
+                      labelText: 'Title', labelStyle: AppTextStyles.normalText1()),
+                  style: AppTextStyles.normalText1(),
+                ),
+                TextField(
+                  controller: _descriptionController,
+                  decoration: InputDecoration(
+                      labelText: 'Description',
+                      labelStyle: AppTextStyles.normalText1()),
+                  style: AppTextStyles.normalText1(),
+                  // keyboardType: TextInputType.phone,
+                  // maxLength: 10,
+                ),
+                SizedBox(height: 10,),
+                TextField(
+                  controller:_rateController,
+                  decoration: InputDecoration(
+                      labelText: 'Rate', labelStyle: AppTextStyles.normalText1()),
+                  style: AppTextStyles.normalText1(),
+                ),
+              ],
+            ),
           ),
           actions: [
             MaterialButton(
@@ -493,7 +502,9 @@ class _UserHomeState extends State<UserHome> {
               onPressed: () {
                 String newtitle = _titleController.text;
                 String newDescription = _descriptionController.text;
-                updateUserData(newtitle, newDescription,docId);
+                String newRate = _rateController.text;
+
+                updateUserData(newtitle, newDescription,docId, newRate);
                 Navigator.pop(context); // Close the dialog
               },
               color: AppColors.buttonColor1,
@@ -511,7 +522,7 @@ class _UserHomeState extends State<UserHome> {
     );
   }
 
-  Future<void> updateUserData(String newtitle, String newDescription , String docId) async {
+  Future<void> updateUserData(String newtitle, String newDescription , String docId, String newRate) async {
     try {
       User? user = FirebaseAuth.instance.currentUser;
       if (user != null) {
@@ -523,6 +534,7 @@ class _UserHomeState extends State<UserHome> {
               .update({
             'title': newtitle,
             'description': newDescription,
+            'rate': newRate,
           });
 
           print('User data updated successfully');
@@ -538,6 +550,5 @@ class _UserHomeState extends State<UserHome> {
       // Handle Firestore update error
     }
   }
-
 }
 
