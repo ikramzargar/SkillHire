@@ -21,7 +21,6 @@ class SpJobs extends StatelessWidget {
             final job = jobs[index];
             final jobId = job.id;
             final latlon = LatLng(job['lat'], job['lon']);
-           // String adress = 'srinagar';
 
             return Hero(
               tag: 'ListTile-Hero-$jobId',
