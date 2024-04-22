@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:skill_hire/globals/app_textStyle.dart';
 import '../globals/app_Colors.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -15,7 +16,7 @@ class ProviderDetailsScreen extends StatefulWidget {
 }
 
 class _ProviderDetailsScreenState extends State<ProviderDetailsScreen> {
-  double _rating = 0.0;
+  //double _rating = 0.0;
 
   // Firestore instance
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -60,12 +61,15 @@ class _ProviderDetailsScreenState extends State<ProviderDetailsScreen> {
 
   String userName = '';
   double initialRating = 0;
+  int noOfRatings = 0;
   @override
   void initState() {
     fetchInitialRating(widget.spData['userId']);
+    fetchNoOfRatings(widget.spData['userId']);
     fetchUserName();
     super.initState();
   }
+
   Future<void> fetchInitialRating(String userId) async {
     try {
       double averageRating = await RatingHelper.getAverageRating(userId);
@@ -76,6 +80,18 @@ class _ProviderDetailsScreenState extends State<ProviderDetailsScreen> {
       print('Error fetching initial rating: $e');
     }
   }
+
+  Future<void> fetchNoOfRatings(String userId) async {
+    try {
+      int totalNoOfRatings = await RatingHelper.getRatingCount(userId);
+      setState(() {
+        noOfRatings = totalNoOfRatings;
+      });
+    } catch (e) {
+      print('Error fetching initial rating: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final spId = widget.spData['userId'];
@@ -90,50 +106,93 @@ class _ProviderDetailsScreenState extends State<ProviderDetailsScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(height: 30),
-            _buildDetailRow('Name:', widget.spData['name'] ?? ''),
-            _buildDetailRow('Profession:', widget.spData['profession'] ?? ''),
-            _buildDetailRow('Experience:', widget.spData['experience'] ?? ''),
-            _buildDetailRow('Address:', widget.spData['address'] ?? ''),
-            _buildDetailRow('Mobile No.:', widget.spData['mobileNo'] ?? ''),
+            _buildDetailRow('Name :', widget.spData['name'] ?? ''),
+            const SizedBox(height: 10),
+            _buildDetailRow('Profession :', widget.spData['profession'] ?? ''),
+            const SizedBox(height: 10),
+            _buildDetailRow('Experience :', widget.spData['experience'] ?? ''),
+            const SizedBox(height: 10),
+            _buildDetailRow('Address :', widget.spData['address'] ?? ''),
+            const SizedBox(height: 10),
+            _buildDetailRow('Mobile No. :', widget.spData['mobileNo'] ?? ''),
+            const SizedBox(height: 10),
             _buildDetailRow(
-                'Expected Rate:', 'Rs ${widget.spData['rate'] ?? ''}'),
+                'Expected Rate :', 'Rs ${widget.spData['rate'] ?? ''}'),
             SizedBox(height: 20),
             Container(
               decoration: BoxDecoration(
-                border: Border(top:BorderSide(),bottom: BorderSide(),right: BorderSide(),left: BorderSide()),
-              ),
-              child: RatingBar.builder(
-                initialRating: initialRating,
-                minRating: 1,
-                direction: Axis.horizontal,
-                allowHalfRating:true,
-                itemCount: 5,
-                itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
-                itemBuilder: (context, _) => Icon(
-                  Icons.star,
-                  color: Colors.amber,
+                color: Colors.white,
+                border: Border.all(
+                  color: AppColors.mainBgColor2,
+                  width: 3.0,
+                  style: BorderStyle.solid,
                 ),
-                onRatingUpdate: (newRating) {
-                  setState(() {
-                    _rating = newRating;
-                  });
-                  _saveRating(
-                      newRating, spId, userName); // Call function to save rating
-                },
+                borderRadius: BorderRadius.circular(10.0),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  children: [
+                    Text(
+                      'Ratings',
+                      style:
+                          AppTextStyles.heading2Normal().copyWith(fontSize: 30),
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Row(
+                      children: [
+                        RatingBar.builder(
+                          initialRating: initialRating,
+                          minRating: 1,
+                          direction: Axis.horizontal,
+                          allowHalfRating: true,
+                          itemCount: 5,
+                          itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+                          itemBuilder: (context, _) => Icon(
+                            Icons.star,
+                            color: Colors.amber,
+                          ),
+                          onRatingUpdate: (newRating) {
+                            // setState(() {
+                            //   _rating = newRating;
+                            // });
+                            _saveRating(newRating, spId,
+                                userName); // Call function to save rating
+                          },
+                        ),
+                        Text('(' + initialRating.toStringAsFixed(1) + ')'),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Text(
+                      'Rated by $noOfRatings users',
+                      style: AppTextStyles.normalText1().copyWith(fontSize: 20),
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                  ],
+                ),
               ),
             ),
             SizedBox(height: 20),
-            MaterialButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: Text('Back'),
-              color: AppColors.buttonColor1,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20.0),
+            Center(
+              child: MaterialButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text('Back'),
+                color: AppColors.buttonColor1,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20.0),
+                ),
+                elevation: 5.0,
+                height: 40,
               ),
-              elevation: 5.0,
-              height: 40,
             ),
           ],
         ),
@@ -147,12 +206,14 @@ class _ProviderDetailsScreenState extends State<ProviderDetailsScreen> {
       children: [
         Text(
           '$label ',
-          style: TextStyle(fontSize: 20),
+          style: AppTextStyles.normalText1(),
         ),
         Expanded(
           child: Text(
             value,
-            style: TextStyle(fontSize: 20),
+            style: AppTextStyles.normalText1(),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
           ),
         ),
       ],
@@ -221,4 +282,32 @@ class RatingHelper {
     // Default to 0 if there are no ratings or an error occurs
     return 0;
   }
+
+  static Future<int> getRatingCount(String userId) async {
+    try {
+      // Reference to the Ratings collection
+      CollectionReference ratingsCollection =
+          FirebaseFirestore.instance.collection('Ratings');
+
+      // Get the document snapshot for the specified userId
+      DocumentSnapshot<Map<String, dynamic>> docSnapshot =
+          await ratingsCollection.doc(userId).get()
+              as DocumentSnapshot<Map<String, dynamic>>;
+
+      if (docSnapshot.exists && docSnapshot.data() != null) {
+        List<dynamic> ratings = docSnapshot.data()!['ratings'] ?? [];
+
+        // Return the length of the ratings array
+        print('no of ratings' + ratings.length.toString());
+        return ratings.length;
+      }
+    } catch (e) {
+      print('Error getting rating count: $e');
+    }
+
+    // Default to 0 if there are no ratings or an error occurs
+    return 0;
+  }
 }
+
+//

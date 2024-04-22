@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:skill_hire/globals/app_Colors.dart';
 import 'package:skill_hire/globals/app_textStyle.dart';
 
@@ -15,12 +16,14 @@ class _SpHomeState extends State<SpHome> {
   bool status = true;
   late FirebaseFirestore _firestore;
   late DocumentReference _docRef;
+  String? userId = '';
+
 
   @override
   void initState() {
     super.initState();
     _firestore = FirebaseFirestore.instance;
-    String? userId = getCurrentUserId();
+    getCurrentUserId();
     if (userId != null) {
       _docRef = _firestore.collection('spdata').doc(userId);
       _docRef.get().then((docSnapshot) {
@@ -35,7 +38,7 @@ class _SpHomeState extends State<SpHome> {
 
   String? getCurrentUserId() {
     User? user = FirebaseAuth.instance.currentUser;
-    return user?.uid;
+    userId = user?.uid;
   }
 
   void _updateSwitchState(bool newValue) {
@@ -123,14 +126,82 @@ class _SpHomeState extends State<SpHome> {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 60),
-            child: Center(
-              child: Text(
-                'No ratings yet!',
-                style: TextStyle(fontSize: 20),
-              ),
-            ),
-          )
+            padding: const EdgeInsets.symmetric(vertical: 20),
+             child:     StreamBuilder<DocumentSnapshot>(
+               stream: _firestore.collection('Ratings').doc(userId).snapshots(),
+               builder: (context, snapshot) {
+                 if (snapshot.hasData && snapshot.data != null) {
+                   var data = snapshot.data!.data() as Map<String, dynamic>?;
+
+                   if (data != null && data['ratings'] != null && data['names'] != null){
+                     List<dynamic> ratings = data['ratings'];
+                     List<dynamic> names = data['names'];
+
+                     return Column(
+                       crossAxisAlignment: CrossAxisAlignment.stretch,
+                       children: List.generate(ratings.length, (index) {
+                         return Padding(
+                           padding: const EdgeInsets.all(8.0),
+                           child: Container(
+                             decoration: BoxDecoration(
+                               color: Colors.white,
+                               border: Border.all(
+                                 color: AppColors.mainBgColor2,
+                                 width: 3.0,
+                                 style: BorderStyle.solid,
+                               ),
+                               borderRadius: BorderRadius.circular(10.0),
+                             ),
+                             child: Padding(
+                               padding: const EdgeInsets.all(10.0),
+                               child: Column(
+                                 mainAxisAlignment: MainAxisAlignment.center,
+                                 children: [
+                                   Row(
+                                     children: [
+                                       RatingBarIndicator(
+                                         rating: ratings[index].toDouble(),
+                                         itemBuilder: (context, index) => Icon(
+                                           Icons.star,
+                                           color: Colors.amber,
+                                         ),
+                                         itemCount: 5,
+                                         itemSize: 30,
+                                         unratedColor: Colors.grey[300],
+                                       ),
+                                       SizedBox(width: 10,),
+                                       Text('('+ ratings[index].toString()+')'),
+                                     ],
+                                   ),
+                                   SizedBox(height: 10),
+                                   Row(
+                                     children: [
+                                       Text('By : ',style: AppTextStyles.normalText1().copyWith(fontSize: 20),),
+                                       Text(
+                                         '${names[index]}',
+                                           style: AppTextStyles.normalText1().copyWith(fontSize: 20),
+                                       ),
+                                     ],
+                                   ),
+                                 ],
+                               ),
+                             ),
+                           ),
+                         );
+                       }),
+                     );
+                   }
+                 }
+
+                 return Center(
+                   child: Text(
+                     'No ratings yet!',
+                     style: TextStyle(fontSize: 20),
+                   ),
+                 );
+               },
+             ),
+          ),
         ],
       ),
     );
