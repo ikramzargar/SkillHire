@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:skill_hire/globals/app_Colors.dart';
+import 'package:flutter/services.dart';
+import 'package:skill_hire/globals/app_colors.dart';
 import 'package:skill_hire/globals/app_textStyle.dart';
-import 'package:skill_hire/location_service.dart';
-import 'package:skill_hire/sp_Side/sp_homepage.dart';
+import 'package:skill_hire/services/location_service.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 
 class SpForm extends StatefulWidget {
@@ -102,7 +102,7 @@ class _SpFormState extends State<SpForm> {
                 children: [
                   _buildTextField('Name', _nameController),
 
-                  _buildTextField('Mobile No.', noController,
+                  _buildTextField('Mobile No.', noController,isNumeric: true,
                       keyboardType: TextInputType.number, maxLength: 10),
                   _buildTextField('Address', addressController),
                   Column(
@@ -213,7 +213,7 @@ class _SpFormState extends State<SpForm> {
                       SizedBox(height: 15),
                     ],
                   ),
-                  _buildTextField('Rate (Rs/Day)', rateController,
+                  _buildTextField('Rate (Rs/Day)', rateController,isNumeric: true,
                       keyboardType: TextInputType.number, maxLength: 4),
                 ],
               ),
@@ -221,13 +221,22 @@ class _SpFormState extends State<SpForm> {
             const SizedBox(height: 10),
             MaterialButton(
               onPressed: () {
-                setState(() {
-                  Navigator.push(
+                if (_validateForm()) {
+                  saveSpData().then((_) {
+                    Navigator.pushReplacementNamed(
                       context,
-                      MaterialPageRoute(
-                          builder: (BuildContext) => SpMainPage()));
-                  saveSpData();
-                });
+                     '/spHome',
+                    );
+                  });
+                } else {
+                  // Show a message or alert the user that the form is incomplete
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Please fill out all required fields.'),
+                      duration: Duration(seconds: 2),
+                    ),
+                  );
+                }
               },
               color: AppColors.buttonColor1,
               child: Text(
@@ -245,9 +254,13 @@ class _SpFormState extends State<SpForm> {
       ),
     );
   }
-
-  Widget _buildTextField(String label, TextEditingController controller,
-      {TextInputType? keyboardType, int? maxLength}) {
+  Widget _buildTextField(
+      String label,
+      TextEditingController controller, {
+        TextInputType? keyboardType,
+        int? maxLength,
+        bool isNumeric = false, // Add this parameter to indicate numeric input
+      }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -255,7 +268,7 @@ class _SpFormState extends State<SpForm> {
           label,
           style: AppTextStyles.normalText1(),
         ),
-        TextField(
+        TextFormField(
           controller: controller,
           keyboardType: keyboardType,
           maxLength: maxLength,
@@ -267,12 +280,51 @@ class _SpFormState extends State<SpForm> {
               borderSide: BorderSide(color: Colors.black, width: 2),
             ),
           ),
+          inputFormatters: isNumeric ? [FilteringTextInputFormatter.digitsOnly] : null,
         ),
         SizedBox(height: 15),
       ],
     );
   }
+  bool _validateForm() {
+    // Check if the name field is empty
+    if (_nameController.text.isEmpty) {
+      return false;
+    }
 
+    // Check if the mobile number field is empty or invalid
+    if (noController.text.isEmpty || !isValidPhoneNumber(noController.text)) {
+      return false;
+    }
+
+    // Check if the address field is empty
+    if (addressController.text.isEmpty) {
+      return false;
+    }
+
+    // Check if the profession is selected
+    if (profession == null) {
+      return false;
+    }
+
+    // Check if the experience is selected
+    if (experience == null) {
+      return false;
+    }
+
+    // Check if the rate field is empty or invalid
+    if (rateController.text.isEmpty || !isNumericOnly(rateController.text)) {
+      return false;
+    }
+
+    // If all checks pass, return true
+    return true;
+  }
+
+  bool isNumericOnly(String value) {
+    // Check if the string contains only digits
+    return value.isNotEmpty && int.tryParse(value) != null;
+  }
   Future<void> saveSpData() async {
     try {
       User? user = FirebaseAuth.instance.currentUser;
@@ -294,6 +346,8 @@ class _SpFormState extends State<SpForm> {
           'email': userEmail,
           'available': availability,
         });
+        CollectionReference ref =  await FirebaseFirestore.instance.collection('users');
+        ref.doc(userId).update({'data':true});
         print('User data saved successfully!');
       } else {
         print('No user is currently signed in.');
@@ -346,7 +400,6 @@ class _SpFormState extends State<SpForm> {
     return itemsHeights;
   }
   bool isValidPhoneNumber(String input) {
-    // Basic phone number validation (accepts 10 digits)
     return input.length == 10 && int.tryParse(input) != null;
   }
 }

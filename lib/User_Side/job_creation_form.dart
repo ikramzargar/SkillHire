@@ -3,9 +3,9 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'globals/app_Colors.dart';
-import 'globals/app_textStyle.dart';
-import 'models/job_model.dart';
+import '../globals/app_colors.dart';
+import '../globals/app_textStyle.dart';
+import '../models/job_model.dart';
 
 class JobCreationForm extends StatefulWidget {
   @override

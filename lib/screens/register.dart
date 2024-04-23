@@ -1,27 +1,21 @@
-import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:skill_hire/globals/app_Colors.dart';
+import 'package:skill_hire/globals/app_colors.dart';
 import 'package:skill_hire/globals/app_textStyle.dart';
-import 'package:skill_hire/sp_Side/sp_form.dart';
 
-
-import 'package:skill_hire/User_Side/user_form.dart';
-import 'login.dart';
-
+// Registration page.
 class Register extends StatefulWidget {
+  const Register({super.key});
+
   @override
-  _RegisterState createState() => _RegisterState();
+  State<Register> createState() => _RegisterState();
 }
 
 class _RegisterState extends State<Register> {
-  bool showProgress = false;
   bool visible = false;
-
   final _formkey = GlobalKey<FormState>();
   final _auth = FirebaseAuth.instance;
-
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmpassController = TextEditingController();
   final TextEditingController name = TextEditingController();
@@ -29,12 +23,11 @@ class _RegisterState extends State<Register> {
   final TextEditingController mobile = TextEditingController();
   bool _isObscure = true;
   bool _isObscure2 = true;
-  File? file;
   var options = [
     'User',
     'Service Provider',
   ];
-   var _currentItemSelected = "User";
+  var _currentItemSelected = "User";
   var role = "User";
 
   @override
@@ -48,20 +41,11 @@ class _RegisterState extends State<Register> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Center(
-                child: Image.asset(
-              'images/logo.png',
-              scale: 1.5,
-            ),),
-            // ClipRRect(
-            //   borderRadius: BorderRadius.circular(20), // Image border
-            //   child: SizedBox.fromSize(
-            //     size: const Size.fromRadius(60), // Image radius
-            //     child: Image.asset('images/logo.png', fit: BoxFit.cover),
-            //   ),
-            // ),
-            // const SizedBox(
-            //   height: 10,
-            // ),
+              child: Image.asset(
+                'images/logo.png',
+                scale: 1.5,
+              ),
+            ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 30),
               child: Container(
@@ -101,6 +85,7 @@ class _RegisterState extends State<Register> {
                             ),
                           ),
                           validator: (value) {
+                            // Validation
                             if (value!.isEmpty) {
                               return "Email cannot be empty";
                             }
@@ -147,6 +132,7 @@ class _RegisterState extends State<Register> {
                             ),
                           ),
                           validator: (value) {
+                            // Validation
                             RegExp regex = RegExp(r'^.{6,}$');
                             if (value!.isEmpty) {
                               return "Password cannot be empty";
@@ -220,6 +206,7 @@ class _RegisterState extends State<Register> {
                                 color: Colors.white,
                               ),
                               child: DropdownButton<String>(
+                                // Dropdown to select roles.
                                 dropdownColor: AppColors.mainBgColor2,
                                 isDense: true,
                                 iconEnabledColor: Colors.black,
@@ -243,7 +230,7 @@ class _RegisterState extends State<Register> {
                                 onChanged: (newValueSelected) {
                                   setState(() {
                                     _currentItemSelected = newValueSelected!;
-                                    role = newValueSelected!;
+                                    role = newValueSelected;
                                   });
                                 },
                                 value: _currentItemSelected,
@@ -266,13 +253,12 @@ class _RegisterState extends State<Register> {
                               height: 40,
                               onPressed: () {
                                 setState(() {
-                                  showProgress = true;
+                                  signUp(
+                                    emailController.text,
+                                    passwordController.text,
+                                    role,
+                                  );
                                 });
-                                signUp(
-                                  emailController.text,
-                                  passwordController.text,
-                                  role,
-                                );
                               },
                               color: Colors.white,
                               child: const Text(
@@ -314,13 +300,7 @@ class _RegisterState extends State<Register> {
                               decoration: TextDecoration.underline),
                         ),
                         onTap: () {
-                          const CircularProgressIndicator();
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => LoginPage(),
-                            ),
-                          );
+                          Navigator.pushReplacementNamed(context, '/login');
                         },
                       ),
                     ],
@@ -328,7 +308,7 @@ class _RegisterState extends State<Register> {
                 ],
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 20,
             ),
           ],
@@ -337,27 +317,35 @@ class _RegisterState extends State<Register> {
     );
   }
 
+// function to register user with email and password.
   void signUp(String email, String password, String role) async {
-    const CircularProgressIndicator();
     if (_formkey.currentState!.validate()) {
+      showDialog(
+          context: context,
+          builder: (context) {
+            return const Center(child: CircularProgressIndicator());
+          });
       await _auth
           .createUserWithEmailAndPassword(email: email, password: password)
           .then((value) => {postDetailsToFirestore(email, role)})
-          .catchError((e) {});
+          .catchError((e) {
+        return e;
+      });
     }
   }
 
+// F unction to save data to firestore.
   postDetailsToFirestore(String email, String role) async {
     FirebaseFirestore.instance;
     var user = _auth.currentUser;
     CollectionReference ref = FirebaseFirestore.instance.collection('users');
-    ref.doc(user!.uid).set({'email': emailController.text, 'role': role});
+    ref
+        .doc(user!.uid)
+        .set({'email': emailController.text, 'role': role, 'data': false});
     if (role == 'User') {
-      Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => const UserForm()));
+      Navigator.pushReplacementNamed(context, '/userForm');
     } else {
-      Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => const SpForm()));
+      Navigator.pushReplacementNamed(context, '/spForm');
     }
   }
 }

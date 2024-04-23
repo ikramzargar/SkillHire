@@ -1,20 +1,20 @@
-import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/services.dart';
 import 'package:skill_hire/globals/app_textStyle.dart';
 
-import '../../globals/app_Colors.dart';
-import '../../job_creation_form.dart';
+import '../../globals/app_colors.dart';
+import '../job_creation_form.dart';
 
-class UserHome extends StatefulWidget {
-  const UserHome({Key? key}) : super(key: key);
+class UserDashboard extends StatefulWidget {
+  const UserDashboard({Key? key}) : super(key: key);
 
   @override
-  State<UserHome> createState() => _UserHomeState();
+  State<UserDashboard> createState() => _UserDashboardState();
 }
 
-class _UserHomeState extends State<UserHome> {
+class _UserDashboardState extends State<UserDashboard> {
   String userId = '';
 
   TextEditingController _titleController = TextEditingController();
@@ -39,8 +39,7 @@ class _UserHomeState extends State<UserHome> {
               scale: 1.5,
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
+          Center(
             child: Text(
               'Welcome!',
               style: TextStyle(fontSize: 30),
@@ -86,7 +85,6 @@ class _UserHomeState extends State<UserHome> {
           ),
           SizedBox(height: 10),
           Container(
-            //height: MediaQuery.of(context).size.height,
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -115,16 +113,12 @@ class _UserHomeState extends State<UserHome> {
                       void deleteJob(String jobId) {
                         FirebaseFirestore.instance
                             .collection('jobs')
-                            .doc(
-                                jobId) // Assuming job.id is the document ID of the job
+                            .doc(jobId)
                             .delete()
                             .then((_) {
-                          // Job deleted successfully
                           print('Job deleted successfully');
                         }).catchError((error) {
-                          // Error deleting job
                           print('Error deleting job: $error');
-                          // Handle error (show message, log error, etc.)
                         });
                       }
 
@@ -155,7 +149,8 @@ class _UserHomeState extends State<UserHome> {
                                                 icon: Icon(Icons.more_vert),
                                                 onChanged: (String? value) {
                                                   if (value == 'edit') {
-                                                    showEditDialog(context, jobId);
+                                                    showEditDialog(
+                                                        context, jobId);
                                                   } else if (value ==
                                                       'delete') {
                                                     showDialog(
@@ -170,9 +165,15 @@ class _UserHomeState extends State<UserHome> {
                                                           actions: [
                                                             TextButton(
                                                               onPressed: () {
-                                                                _titleController.text = job['title'];
-                                                                _rateController.text = job['rate'];
-                                                                _descriptionController.text = job['description'];
+                                                                _titleController
+                                                                        .text =
+                                                                    job['title'];
+                                                                _rateController
+                                                                        .text =
+                                                                    job['rate'];
+                                                                _descriptionController
+                                                                        .text =
+                                                                    job['description'];
                                                                 Navigator.pop(
                                                                     context); // Close dialog
                                                               },
@@ -310,23 +311,7 @@ class _UserHomeState extends State<UserHome> {
                                                   SizedBox(
                                                     height: 20,
                                                   ),
-                                                  Row(
-                                                    children: [
-                                                      Text(
-                                                        'Mobile No. : ',
-                                                        style: TextStyle(
-                                                            fontSize: 20),
-                                                      ),
-                                                      Text(
-                                                        job['mobile'] ?? '',
-                                                        style: TextStyle(
-                                                            fontSize: 20),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  SizedBox(
-                                                    height: 20,
-                                                  ),
+
                                                   Row(
                                                     children: [
                                                       Text(
@@ -444,8 +429,8 @@ class _UserHomeState extends State<UserHome> {
       return null;
     }
   }
-  void showEditDialog(BuildContext context , String docId) {
 
+  void showEditDialog(BuildContext context, String docId) {
     showDialog(
       context: context,
       builder: (context) {
@@ -459,27 +444,51 @@ class _UserHomeState extends State<UserHome> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                TextField(
-                  controller:_titleController,
-                  decoration: InputDecoration(
-                      labelText: 'Title', labelStyle: AppTextStyles.normalText1()),
-                  style: AppTextStyles.normalText1(),
+                TextFormField(
+                  controller: _titleController,
+                  decoration: InputDecoration(labelText: 'Job Title'),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter a job title';
+                    }
+                    return null;
+                  },
                 ),
-                TextField(
+                TextFormField(
                   controller: _descriptionController,
-                  decoration: InputDecoration(
-                      labelText: 'Description',
-                      labelStyle: AppTextStyles.normalText1()),
-                  style: AppTextStyles.normalText1(),
-                  // keyboardType: TextInputType.phone,
-                  // maxLength: 10,
+                  decoration: InputDecoration(labelText: 'Job Description'),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter a job description';
+                    }
+                    return null;
+                  },
+                  maxLines: 1,
                 ),
-                SizedBox(height: 10,),
-                TextField(
-                  controller:_rateController,
-                  decoration: InputDecoration(
-                      labelText: 'Rate', labelStyle: AppTextStyles.normalText1()),
-                  style: AppTextStyles.normalText1(),
+                SizedBox(
+                  height: 10,
+                ),
+                TextFormField(
+                  controller: _rateController,
+                  decoration:
+                      InputDecoration(labelText: 'Expected rate (Rs/day)'),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter the expected rate';
+                    }
+                    if (double.tryParse(value) == null) {
+                      return 'Please enter a valid numeric value';
+                    }
+
+                    return null;
+                  },
+                  maxLength: 4,
+                  keyboardType: TextInputType.number,
+                  inputFormatters: <TextInputFormatter>[
+                    FilteringTextInputFormatter.allow(
+                      RegExp(r'[0-9]'),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -500,12 +509,14 @@ class _UserHomeState extends State<UserHome> {
             ),
             MaterialButton(
               onPressed: () {
-                String newtitle = _titleController.text;
-                String newDescription = _descriptionController.text;
-                String newRate = _rateController.text;
+                setState(() {
+                  String newtitle = _titleController.text;
+                  String newDescription = _descriptionController.text;
+                  String newRate = _rateController.text;
+                  updateUserData(newtitle, newDescription, docId, newRate);
+                });
 
-                updateUserData(newtitle, newDescription,docId, newRate);
-                Navigator.pop(context); // Close the dialog
+                Navigator.of(context).popUntil(ModalRoute.withName("/userHome"));
               },
               color: AppColors.buttonColor1,
               child: Text(
@@ -522,7 +533,8 @@ class _UserHomeState extends State<UserHome> {
     );
   }
 
-  Future<void> updateUserData(String newtitle, String newDescription , String docId, String newRate) async {
+  Future<void> updateUserData(String newtitle, String newDescription,
+      String docId, String newRate) async {
     try {
       User? user = FirebaseAuth.instance.currentUser;
       if (user != null) {
@@ -551,4 +563,3 @@ class _UserHomeState extends State<UserHome> {
     }
   }
 }
-

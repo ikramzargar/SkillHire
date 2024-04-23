@@ -1,10 +1,14 @@
+import 'dart:developer';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:skill_hire/globals/app_textStyle.dart';
-import '../globals/app_Colors.dart';
+import '../globals/app_colors.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import '../sp_Side/rating_helper.dart';
+import 'package:url_launcher/url_launcher.dart';
 
+//Show Service Providers detail.
 class ProviderDetailsScreen extends StatefulWidget {
   final Map<String, dynamic> spData;
 
@@ -16,20 +20,11 @@ class ProviderDetailsScreen extends StatefulWidget {
 }
 
 class _ProviderDetailsScreenState extends State<ProviderDetailsScreen> {
-  //double _rating = 0.0;
-
-  // Firestore instance
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-
-  // Function to save rating to Firestore
-
+  //Function to save rating.
   Future<void> _saveRating(double rating, String userId, String name) async {
     try {
-      // Reference to the Ratings collection
       CollectionReference ratingsCollection =
           FirebaseFirestore.instance.collection('Ratings');
-
-      // Get the existing document snapshot
       DocumentSnapshot<Map<String, dynamic>> docSnapshot =
           await ratingsCollection.doc(userId).get()
               as DocumentSnapshot<Map<String, dynamic>>;
@@ -55,7 +50,8 @@ class _ProviderDetailsScreenState extends State<ProviderDetailsScreen> {
         'names': existingNames,
       });
     } catch (e) {
-      print('Error saving rating: $e');
+      //Print error.
+      log('Error saving rating: $e');
     }
   }
 
@@ -70,6 +66,7 @@ class _ProviderDetailsScreenState extends State<ProviderDetailsScreen> {
     super.initState();
   }
 
+//Function to fetch initial rating.
   Future<void> fetchInitialRating(String userId) async {
     try {
       double averageRating = await RatingHelper.getAverageRating(userId);
@@ -77,10 +74,12 @@ class _ProviderDetailsScreenState extends State<ProviderDetailsScreen> {
         initialRating = averageRating;
       });
     } catch (e) {
-      print('Error fetching initial rating: $e');
+      //Print error.
+      log('Error fetching initial rating: $e');
     }
   }
 
+//Function to fetch number of ratings.
   Future<void> fetchNoOfRatings(String userId) async {
     try {
       int totalNoOfRatings = await RatingHelper.getRatingCount(userId);
@@ -88,7 +87,8 @@ class _ProviderDetailsScreenState extends State<ProviderDetailsScreen> {
         noOfRatings = totalNoOfRatings;
       });
     } catch (e) {
-      print('Error fetching initial rating: $e');
+      //Print error.
+      log('Error fetching initial rating: $e');
     }
   }
 
@@ -97,7 +97,7 @@ class _ProviderDetailsScreenState extends State<ProviderDetailsScreen> {
     final spId = widget.spData['userId'];
     return Scaffold(
       appBar: AppBar(
-        title: Text('Provider Details'),
+        title: const Text('Provider Details'),
       ),
       backgroundColor: AppColors.mainBgColor,
       body: SingleChildScrollView(
@@ -105,7 +105,7 @@ class _ProviderDetailsScreenState extends State<ProviderDetailsScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(height: 30),
+            const SizedBox(height: 30),
             _buildDetailRow('Name :', widget.spData['name'] ?? ''),
             const SizedBox(height: 10),
             _buildDetailRow('Profession :', widget.spData['profession'] ?? ''),
@@ -114,11 +114,38 @@ class _ProviderDetailsScreenState extends State<ProviderDetailsScreen> {
             const SizedBox(height: 10),
             _buildDetailRow('Address :', widget.spData['address'] ?? ''),
             const SizedBox(height: 10),
-            _buildDetailRow('Mobile No. :', widget.spData['mobileNo'] ?? ''),
-            const SizedBox(height: 10),
             _buildDetailRow(
                 'Expected Rate :', 'Rs ${widget.spData['rate'] ?? ''}'),
-            SizedBox(height: 20),
+            const SizedBox(height: 10),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                MaterialButton(
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(20.0)),
+                  ),
+                  elevation: 1,
+                  color: AppColors.buttonColor1,
+                  onPressed: () {
+                    _launchCaller(widget.spData[
+                        'mobileNo']); // Call function to launch phone dialer
+                  },
+                  child: Row(
+                    children: [
+                      Text(
+                        'Call ',
+                        style: AppTextStyles.normalText1(),
+                      ),
+                      const Icon(
+                        Icons.phone,
+                        color: Colors.white,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
             Container(
               decoration: BoxDecoration(
                 color: Colors.white,
@@ -143,26 +170,25 @@ class _ProviderDetailsScreenState extends State<ProviderDetailsScreen> {
                     ),
                     Row(
                       children: [
+                        //Build rating bar.
                         RatingBar.builder(
                           initialRating: initialRating,
                           minRating: 1,
                           direction: Axis.horizontal,
                           allowHalfRating: true,
                           itemCount: 5,
-                          itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
-                          itemBuilder: (context, _) => Icon(
+                          itemPadding:
+                              const EdgeInsets.symmetric(horizontal: 4.0),
+                          itemBuilder: (context, _) => const Icon(
                             Icons.star,
                             color: Colors.amber,
                           ),
                           onRatingUpdate: (newRating) {
-                            // setState(() {
-                            //   _rating = newRating;
-                            // });
                             _saveRating(newRating, spId,
                                 userName); // Call function to save rating
                           },
                         ),
-                        Text('(' + initialRating.toStringAsFixed(1) + ')'),
+                        Text('(${initialRating.toStringAsFixed(1)})'),
                       ],
                     ),
                     const SizedBox(
@@ -179,19 +205,19 @@ class _ProviderDetailsScreenState extends State<ProviderDetailsScreen> {
                 ),
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Center(
               child: MaterialButton(
                 onPressed: () {
                   Navigator.pop(context);
                 },
-                child: Text('Back'),
                 color: AppColors.buttonColor1,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20.0),
                 ),
                 elevation: 5.0,
                 height: 40,
+                child: const Text('Back'),
               ),
             ),
           ],
@@ -200,6 +226,7 @@ class _ProviderDetailsScreenState extends State<ProviderDetailsScreen> {
     );
   }
 
+//Widget build method.
   Widget _buildDetailRow(String label, String value) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -220,6 +247,7 @@ class _ProviderDetailsScreenState extends State<ProviderDetailsScreen> {
     );
   }
 
+//Function to fetch user Name.
   Future<void> fetchUserName() async {
     try {
       User? user = FirebaseAuth.instance.currentUser;
@@ -229,85 +257,24 @@ class _ProviderDetailsScreenState extends State<ProviderDetailsScreen> {
             .doc(user.uid)
             .get();
         if (userdata.exists) {
-          print('Sp Data Retrieved Successfully: ${userdata.data()}');
+          log('User Data Retrieved Successfully: ${userdata.data()}');
           setState(() {
             userName = userdata['name'] ?? '';
           });
         } else {
-          print('User Data Does Not Exist for UserID: ${user.uid}');
+          log('SpData Does Not Exist for UserID: ${user.uid}');
         }
       } else {
-        print('No User is Currently Signed In');
+        log('No User is Currently Signed In');
       }
     } catch (e) {
-      print('Error Fetching User Data: $e');
+      log('Error Fetching User Data: $e');
     }
+  }
+
+//Function to launch dialer.
+  Future<void> _launchCaller(String phoneNumber) async {
+    final Uri url = Uri(scheme: 'tel', path: phoneNumber);
+    await launchUrl(url);
   }
 }
-
-class RatingHelper {
-  static Future<double> getAverageRating(String userId) async {
-    try {
-      // Reference to the Ratings collection
-      CollectionReference ratingsCollection =
-          FirebaseFirestore.instance.collection('Ratings');
-
-      // Get the document snapshot for the specified userId
-      DocumentSnapshot<Map<String, dynamic>> docSnapshot =
-          await ratingsCollection.doc(userId).get()
-              as DocumentSnapshot<Map<String, dynamic>>;
-
-      if (docSnapshot.exists && docSnapshot.data() != null) {
-        List<dynamic> ratings = docSnapshot.data()!['ratings'] ?? [];
-
-        if (ratings.isNotEmpty) {
-          // Calculate the average of ratings
-          double sum = 0;
-          for (var rating in ratings) {
-            if (rating is num) {
-              sum += rating;
-            }
-          }
-
-          // Calculate the average rating
-          double averageRating = sum / ratings.length;
-
-          return averageRating;
-        }
-      }
-    } catch (e) {
-      print('Error getting average rating: $e');
-    }
-
-    // Default to 0 if there are no ratings or an error occurs
-    return 0;
-  }
-
-  static Future<int> getRatingCount(String userId) async {
-    try {
-      // Reference to the Ratings collection
-      CollectionReference ratingsCollection =
-          FirebaseFirestore.instance.collection('Ratings');
-
-      // Get the document snapshot for the specified userId
-      DocumentSnapshot<Map<String, dynamic>> docSnapshot =
-          await ratingsCollection.doc(userId).get()
-              as DocumentSnapshot<Map<String, dynamic>>;
-
-      if (docSnapshot.exists && docSnapshot.data() != null) {
-        List<dynamic> ratings = docSnapshot.data()!['ratings'] ?? [];
-
-        // Return the length of the ratings array
-        print('no of ratings' + ratings.length.toString());
-        return ratings.length;
-      }
-    } catch (e) {
-      print('Error getting rating count: $e');
-    }
-
-    // Default to 0 if there are no ratings or an error occurs
-    return 0;
-  }
-}
-
-//

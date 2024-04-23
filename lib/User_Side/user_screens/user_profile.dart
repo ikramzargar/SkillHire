@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:skill_hire/globals/app_Colors.dart';
+import 'package:flutter/services.dart';
+import 'package:skill_hire/globals/app_colors.dart';
 import 'package:skill_hire/globals/app_textStyle.dart';
-import 'package:skill_hire/job_creation_form.dart';
-import 'package:skill_hire/profile_edit_form.dart';
+import 'package:skill_hire/User_Side/job_creation_form.dart';
 
 import '../../screens/login.dart';
 
@@ -171,8 +171,8 @@ class _UserProfileState extends State<UserProfile> {
   }
 
   void showEditDialog(BuildContext context) {
-    _nameController.text = name;
-    _mobileController.text = mobileNum;
+    _nameController.text = name ?? '';
+    _mobileController.text = mobileNum ?? '';
 
     showDialog(
       context: context,
@@ -186,20 +186,38 @@ class _UserProfileState extends State<UserProfile> {
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              TextField(
+              TextFormField(
                 controller: _nameController,
                 decoration: InputDecoration(
-                    labelText: 'Name', labelStyle: AppTextStyles.normalText1()),
+                  labelText: 'Name',
+                  labelStyle: AppTextStyles.normalText1(),
+                ),
                 style: AppTextStyles.normalText1(),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter your name';
+                  }
+                  return null;
+                },
               ),
-              TextField(
+              TextFormField(
                 controller: _mobileController,
                 decoration: InputDecoration(
-                    labelText: 'Mobile Number',
-                    labelStyle: AppTextStyles.normalText1()),
+                  labelText: 'Mobile Number',
+                  labelStyle: AppTextStyles.normalText1(),
+                ),
                 style: AppTextStyles.normalText1(),
                 keyboardType: TextInputType.phone,
                 maxLength: 10,
+                inputFormatters: [
+                  FilteringTextInputFormatter.allow(RegExp(r'[0-9]')), // Allow only numbers
+                ],
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter your mobile number';
+                  }
+                  return null;
+                },
               ),
             ],
           ),
@@ -214,16 +232,19 @@ class _UserProfileState extends State<UserProfile> {
                 style: AppTextStyles.normalText1().copyWith(fontSize: 20),
               ),
               shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(20.0))),
+                borderRadius: BorderRadius.all(Radius.circular(20.0)),
+              ),
               elevation: 1,
             ),
-            SizedBox(width: 10,),
+            SizedBox(width: 10),
             MaterialButton(
               onPressed: () {
-                String newName = _nameController.text;
-                String newMobileNum = _mobileController.text;
-                updateUserData(newName, newMobileNum);
-                Navigator.pop(context); // Close the dialog
+                if (_validateFields()) {
+                  String newName = _nameController.text;
+                  String newMobileNum = _mobileController.text;
+                  updateUserData(newName, newMobileNum);
+                  Navigator.pop(context); // Close the dialog
+                }
               },
               color: AppColors.buttonColor1,
               child: Text(
@@ -231,13 +252,32 @@ class _UserProfileState extends State<UserProfile> {
                 style: AppTextStyles.normalText1().copyWith(fontSize: 20),
               ),
               shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(20.0))),
+                borderRadius: BorderRadius.all(Radius.circular(20.0)),
+              ),
               elevation: 1,
             ),
           ],
         );
       },
     );
+  }
+
+  bool _validateFields() {
+    if (_nameController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Please enter your name')),
+      );
+      return false;
+    }
+
+    if (_mobileController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Please enter your mobile number')),
+      );
+      return false;
+    }
+
+    return true;
   }
 
   Future<void> updateUserData(String newName, String newMobileNum) async {

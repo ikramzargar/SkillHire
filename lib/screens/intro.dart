@@ -1,9 +1,11 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
-import 'package:skill_hire/globals/app_Colors.dart';
+import 'package:flutter/services.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:skill_hire/globals/app_colors.dart';
 import 'package:skill_hire/globals/app_textStyle.dart';
-import 'register.dart';
 
+//Splash Screen.
 class IntroScreen extends StatefulWidget {
   const IntroScreen({super.key});
 
@@ -20,7 +22,7 @@ class _IntroScreenState extends State<IntroScreen> {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(
+          const SizedBox(
             height: 10,
           ),
           Center(
@@ -77,11 +79,32 @@ class _IntroScreenState extends State<IntroScreen> {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20),
               ),
-              onPressed: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (BuildContext context) => Register()));
+              onPressed: () async {
+                // Request location permission
+                var status = await Permission.location.request();
+                if (status.isGranted) {
+                  Navigator.pushNamed(context, '/login');
+                } else {
+                  // Permission is not granted, show a dialog and close the app
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: const Text('Permission Required'),
+                      content: const Text(
+                          'Please grant location permission to proceed.'),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                            // Close the app when permission is denied
+                            SystemNavigator.pop();
+                          },
+                          child: const Text('OK'),
+                        ),
+                      ],
+                    ),
+                  );
+                }
               },
               child: const Padding(
                 padding: EdgeInsets.all(8.0),
@@ -92,7 +115,7 @@ class _IntroScreenState extends State<IntroScreen> {
               ),
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 10,
           ),
         ],

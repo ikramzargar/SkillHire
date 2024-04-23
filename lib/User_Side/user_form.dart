@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/services.dart'; // Import for input formatters
 import 'package:skill_hire/globals/app_textStyle.dart';
-import 'package:skill_hire/location_service.dart';
+import 'package:skill_hire/services/location_service.dart';
 import 'package:skill_hire/User_Side/user_homepage.dart';
-
-import '../globals/app_Colors.dart';
+import '../globals/app_colors.dart';
 
 class UserForm extends StatefulWidget {
   const UserForm({Key? key}) : super(key: key);
@@ -18,7 +18,6 @@ class _UserFormState extends State<UserForm> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController noController = TextEditingController();
   final TextEditingController addressController = TextEditingController();
-
   late double lat;
   late double lon;
 
@@ -75,7 +74,11 @@ class _UserFormState extends State<UserForm> {
                   _buildTextField('Name', nameController),
                   SizedBox(height: 30),
                   _buildTextField('Mobile No.', noController,
-                      keyboardType: TextInputType.number, maxLength: 10),
+                      keyboardType: TextInputType.number,
+                      maxLength: 10,
+                      inputFormatter: <TextInputFormatter>[
+                        FilteringTextInputFormatter.digitsOnly
+                      ]),
                   SizedBox(height: 30),
                   _buildTextField('Address', addressController),
                 ],
@@ -83,15 +86,7 @@ class _UserFormState extends State<UserForm> {
             ),
             const SizedBox(height: 30),
             MaterialButton(
-              onPressed: () {
-                setState(() {
-                  saveUserData();
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (BuildContext) => UserHomePage()));
-                });
-              },
+              onPressed: _validateForm,
               color: AppColors.buttonColor1,
               child: Text(
                 'Save',
@@ -108,8 +103,13 @@ class _UserFormState extends State<UserForm> {
     );
   }
 
-  Widget _buildTextField(String label, TextEditingController controller,
-      {TextInputType? keyboardType, int? maxLength}) {
+  Widget _buildTextField(
+    String label,
+    TextEditingController controller, {
+    TextInputType? keyboardType,
+    int? maxLength,
+    List<TextInputFormatter>? inputFormatter, // Added input formatter parameter
+  }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -121,6 +121,7 @@ class _UserFormState extends State<UserForm> {
           controller: controller,
           keyboardType: keyboardType,
           maxLength: maxLength,
+          inputFormatters: inputFormatter, // Set input formatters
           style: AppTextStyles.textfieldStyle1(),
           decoration: InputDecoration(
             filled: true,
@@ -133,6 +134,39 @@ class _UserFormState extends State<UserForm> {
         SizedBox(height: 15),
       ],
     );
+  }
+
+  Future<void> _validateForm() async {
+    if (nameController.text.isEmpty ||
+        noController.text.isEmpty ||
+        addressController.text.isEmpty ||
+        !isValidPhoneNumber(noController.text)) {
+      // Show error message if any of the fields is empty
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text('Error'),
+            content: Text('Please fill out all fields.'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+    } else {
+      // All fields are filled, proceed to save data
+      saveUserData();
+      Navigator.pushReplacementNamed(
+        context,
+        '/userHome',
+      );
+    }
   }
 
   Future<void> saveUserData() async {
@@ -154,13 +188,18 @@ class _UserFormState extends State<UserForm> {
           'latitude': lat,
           'longitude': lon,
         });
+        CollectionReference ref =  await FirebaseFirestore.instance.collection('users');
+        ref.doc(userId).update({'data':true});
         print('User data saved successfully!');
-            } else {
+      } else {
         print('No user is currently signed in.');
       }
     } catch (e) {
       print('Error saving user data: $e');
     }
   }
+
+  bool isValidPhoneNumber(String input) {
+    return input.length == 10 && int.tryParse(input) != null;
+  }
 }
-// }

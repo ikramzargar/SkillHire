@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../../globals/app_Colors.dart';
+import '../../globals/app_colors.dart';
 import '../../globals/app_textStyle.dart';
 import '../../models/providers_details_screen.dart';
-
 
 class UserProviders extends StatefulWidget {
   @override
@@ -115,12 +114,12 @@ class _UserProvidersState extends State<UserProviders> {
                               ),
                             ],
                           ),
-
                           onTap: () {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => ProviderDetailsScreen(spData: spData),
+                                builder: (context) =>
+                                    ProviderDetailsScreen(spData: spData),
                               ),
                             );
                           },

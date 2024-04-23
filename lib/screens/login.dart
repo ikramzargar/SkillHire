@@ -2,24 +2,18 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:skill_hire/globals/app_textStyle.dart';
+import '../globals/app_colors.dart';
 
-import 'package:skill_hire/sp_Side/sp_homepage.dart';
-
-import 'package:skill_hire/User_Side/user_homepage.dart';
-import '../globals/app_Colors.dart';
-
-import 'register.dart';
-
+// Login page.
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
   @override
-  _LoginPageState createState() => _LoginPageState();
+  State<LoginPage> createState() => _LoginPageState();
 }
 
 class _LoginPageState extends State<LoginPage> {
   bool _isObscure3 = true;
-  bool visible = false;
   final _formkey = GlobalKey<FormState>();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
@@ -85,18 +79,13 @@ class _LoginPageState extends State<LoginPage> {
                             ),
                           ),
                           validator: (value) {
+                            // Validate Email feild
                             if (value!.isEmpty) {
-                              setState(() {
-                                visible = false;
-                              });
                               return "Email cannot be empty";
                             }
                             if (!RegExp(
                                     "^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+.[a-z]")
                                 .hasMatch(value)) {
-                              setState(() {
-                                visible = false;
-                              });
                               return ("Please enter a valid email");
                             } else {
                               return null;
@@ -139,17 +128,12 @@ class _LoginPageState extends State<LoginPage> {
                             ),
                           ),
                           validator: (value) {
+                            // Validate password field.
                             RegExp regex = RegExp(r'^.{6,}$');
                             if (value!.isEmpty) {
-                              setState(() {
-                                visible = false;
-                              });
                               return "Password cannot be empty";
                             }
                             if (!regex.hasMatch(value)) {
-                              setState(() {
-                                visible = false;
-                              });
                               return ("please enter valid password min. 6 character");
                             } else {
                               return null;
@@ -171,10 +155,9 @@ class _LoginPageState extends State<LoginPage> {
                           height: 40,
                           onPressed: () {
                             setState(() {
-                              visible = true;
+                              signIn(emailController.text,
+                                  passwordController.text);
                             });
-                            signIn(
-                                emailController.text, passwordController.text);
                           },
                           color: Colors.white,
                           child: const Text(
@@ -186,15 +169,6 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                         const SizedBox(
                           height: 10,
-                        ),
-                        Visibility(
-                          maintainSize: true,
-                          maintainAnimation: true,
-                          maintainState: true,
-                          visible: visible,
-                          child: const CircularProgressIndicator(
-                            color: Colors.white,
-                          ),
                         ),
                       ],
                     ),
@@ -222,12 +196,7 @@ class _LoginPageState extends State<LoginPage> {
                               decoration: TextDecoration.underline,
                             )),
                         onTap: () {
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => Register(),
-                            ),
-                          );
+                          Navigator.pushReplacementNamed(context, '/register');
                         },
                       ),
                     ],
@@ -241,6 +210,7 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
+// Function to reroute users to specific roles.
   void route() {
     User? user = FirebaseAuth.instance.currentUser;
     FirebaseFirestore.instance
@@ -250,45 +220,48 @@ class _LoginPageState extends State<LoginPage> {
         .then((DocumentSnapshot documentSnapshot) {
       if (documentSnapshot.exists) {
         if (documentSnapshot.get('role') == "User") {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const UserHomePage(),
-            ),
-          );
+          if (documentSnapshot.get('data') != true) {
+            Navigator.pushReplacementNamed(context, '/userForm');
+          } else {
+            Navigator.pushReplacementNamed(context, '/userHome');
+          }
         } else {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const SpMainPage(),
-            ),
-          );
+          if (documentSnapshot.get('data') != true) {
+            Navigator.pushReplacementNamed(context, '/spForm');
+          } else {
+            Navigator.pushReplacementNamed(context, '/spHome');
+          }
         }
       }
     });
   }
 
+// Function to signin with email and password.
   void signIn(String email, String password) async {
     if (_formkey.currentState!.validate()) {
       try {
-        setState(() {
-          visible = true;
-        });
+        showDialog(
+            context: context,
+            builder: (context) {
+              return const Center(child: CircularProgressIndicator());
+            });
         await FirebaseAuth.instance.signInWithEmailAndPassword(
           email: email,
           password: password,
         );
         FirebaseAuth.instance.currentUser;
         route();
+        Navigator.of(context).pop();
       } on FirebaseAuthException {
         setState(() {
+          Navigator.of(context).pop();
           _showDialog(context);
-          visible = false;
         });
       }
     }
   }
 
+// Show error dailog.
   void _showDialog(
     BuildContext context,
   ) {

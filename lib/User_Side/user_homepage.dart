@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
-import 'package:skill_hire/User_Side/user_screens/user_homescreen.dart';
+import 'package:skill_hire/User_Side/user_screens/user_dashboard.dart';
 import 'package:skill_hire/User_Side/user_screens/user_providers_screen.dart';
 import 'package:skill_hire/User_Side/user_screens/user_profile.dart';
 
-import '../globals/app_Colors.dart';
+import '../globals/app_colors.dart';
 import '../globals/app_textStyle.dart';
 
 class UserHomePage extends StatefulWidget {
@@ -15,7 +15,7 @@ class UserHomePage extends StatefulWidget {
 
 class _UserHomePageState extends State<UserHomePage> {
   List<Widget> screenList = [
-    UserHome(),
+    UserDashboard(),
     UserProviders(),
     UserProfile(),
   ];
@@ -25,16 +25,12 @@ class _UserHomePageState extends State<UserHomePage> {
     return Scaffold(
       backgroundColor: AppColors.mainBgColor,
       appBar: AppBar(
-        toolbarHeight: 90,
-        automaticallyImplyLeading: false,
-        backgroundColor: AppColors.mainBgColor2,
-        title: Padding(
-          padding: const EdgeInsets.only(top: 20),
-          child: Center(
-            child: Text('SkillHire',style: AppTextStyles.heading2Normal(),),
-          ),
-        ),
+      automaticallyImplyLeading: false,
+      backgroundColor: AppColors.mainBgColor2,
+      title: Center(
+        child: Text('SkillHire',style: AppTextStyles.heading2Normal(),),
       ),
+    ),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.only(

@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
-import 'package:skill_hire/globals/app_Colors.dart';
+import 'package:skill_hire/globals/app_colors.dart';
 import 'package:skill_hire/globals/app_textStyle.dart';
-import 'package:skill_hire/sp_Side/sp_screens/sp_homescreen.dart';
+import 'package:skill_hire/sp_Side/sp_screens/sp_dashboard.dart';
 import 'package:skill_hire/sp_Side/sp_screens/sp_jobs_screen.dart';
 import 'package:skill_hire/sp_Side/sp_screens/sp_profile.dart';
 
-class SpMainPage extends StatefulWidget {
-  const SpMainPage({super.key});
+class SpHomePage extends StatefulWidget {
+  const SpHomePage({super.key});
 
   @override
-  State<SpMainPage> createState() => _SpMainPageState();
+  State<SpHomePage> createState() => _SpHomePageState();
 }
 
-class _SpMainPageState extends State<SpMainPage> {
+class _SpHomePageState extends State<SpHomePage> {
   List<Widget> screenList = [
-    SpHome(),
+    SpDashboard(),
     SpJobs(),
     SpProfile(),
   ];
