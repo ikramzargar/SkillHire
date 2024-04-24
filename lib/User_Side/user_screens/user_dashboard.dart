@@ -58,7 +58,7 @@ class _UserDashboardState extends State<UserDashboard> {
                         'Create a Job',
                         style: AppTextStyles.heading2Normal(),
                       ),
-                      content: JobCreationForm(),
+                      content: const JobCreationForm(),
                     );
                   },
                 );
@@ -91,23 +91,25 @@ class _UserDashboardState extends State<UserDashboard> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 StreamBuilder<QuerySnapshot>(
-                  stream: FirebaseFirestore.instance
-                      .collection('jobs')
-                      .where('userId', isEqualTo: userId)
-                      .snapshots(),
-                  builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-                    if (snapshot.hasError) {
-                      return Center(
-                        child: Text('Error: ${snapshot.error}'),
-                      );
-                    } else {
-                      final List<DocumentSnapshot> jobs = snapshot.data!.docs;
-
-                      if (jobs.isEmpty) {
+                    stream: FirebaseFirestore.instance
+                        .collection('jobs')
+                        .where('userId', isEqualTo: userId)
+                        .snapshots(),
+                    builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                      if (snapshot.hasError) {
+                        return Center(
+                          child: Text('Error: ${snapshot.error}'),
+                        );
+                      }
+                      if (snapshot.data == null ||
+                          snapshot.data!.docs.isEmpty) {
                         return const Center(
                           child: Text('No active tasks!'),
                         );
                       }
+
+                      final List<DocumentSnapshot> jobs = snapshot.data!.docs;
+
                       void deleteJob(String jobId) {
                         FirebaseFirestore.instance
                             .collection('jobs')
@@ -405,9 +407,7 @@ class _UserDashboardState extends State<UserDashboard> {
                           );
                         },
                       );
-                    }
-                  },
-                ),
+                    }),
               ],
             ),
           ),
