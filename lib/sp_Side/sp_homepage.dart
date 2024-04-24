@@ -6,6 +6,7 @@ import 'package:skill_hire/sp_Side/sp_screens/sp_dashboard.dart';
 import 'package:skill_hire/sp_Side/sp_screens/sp_jobs_screen.dart';
 import 'package:skill_hire/sp_Side/sp_screens/sp_profile.dart';
 
+// Service provider navbar.
 class SpHomePage extends StatefulWidget {
   const SpHomePage({super.key});
 
@@ -15,9 +16,9 @@ class SpHomePage extends StatefulWidget {
 
 class _SpHomePageState extends State<SpHomePage> {
   List<Widget> screenList = [
-    SpDashboard(),
-    SpJobs(),
-    SpProfile(),
+    const SpDashboard(),
+    const SpJobs(),
+    const SpProfile(),
   ];
   int homeIndex = 0;
   @override
@@ -28,12 +29,15 @@ class _SpHomePageState extends State<SpHomePage> {
         automaticallyImplyLeading: false,
         backgroundColor: AppColors.mainBgColor2,
         title: Center(
-          child: Text('SkillHire',style: AppTextStyles.heading2Normal(),),
+          child: Text(
+            'SkillHire',
+            style: AppTextStyles.heading2Normal(),
+          ),
         ),
       ),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.only(
+          borderRadius: const BorderRadius.only(
               topLeft: Radius.circular(20), topRight: Radius.circular(20)),
           color: AppColors.mainBgColor2,
         ),
@@ -51,8 +55,8 @@ class _SpHomePageState extends State<SpHomePage> {
               activeColor: Colors.white,
               tabBackgroundColor: AppColors.buttonColor1,
               gap: 10,
-              padding: EdgeInsets.all(16),
-              tabs: [
+              padding: const EdgeInsets.all(16),
+              tabs: const [
                 GButton(
                   icon: Icons.home,
                   text: 'Home',
@@ -69,8 +73,8 @@ class _SpHomePageState extends State<SpHomePage> {
         ),
       ),
       body: IndexedStack(
-        children: screenList,
         index: homeIndex,
+        children: screenList,
       ),
     );
   }

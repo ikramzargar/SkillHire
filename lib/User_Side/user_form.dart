@@ -1,12 +1,14 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/services.dart'; // Import for input formatters
+import 'package:flutter/services.dart';
 import 'package:skill_hire/globals/app_textStyle.dart';
 import 'package:skill_hire/services/location_service.dart';
-import 'package:skill_hire/User_Side/user_homepage.dart';
 import '../globals/app_colors.dart';
 
+// User form.
 class UserForm extends StatefulWidget {
   const UserForm({Key? key}) : super(key: key);
 
@@ -27,6 +29,7 @@ class _UserFormState extends State<UserForm> {
     getLocation();
   }
 
+// Function to get user location.
   Future<void> getLocation() async {
     try {
       Location location = Location();
@@ -36,7 +39,7 @@ class _UserFormState extends State<UserForm> {
         lon = location.longitude!;
       });
     } catch (e) {
-      print('Error getting location: $e');
+      log('Error getting location: $e');
     }
   }
 
@@ -52,7 +55,7 @@ class _UserFormState extends State<UserForm> {
               width: double.maxFinite,
               decoration: BoxDecoration(
                 color: AppColors.mainBgColor2,
-                borderRadius: BorderRadius.only(
+                borderRadius: const BorderRadius.only(
                   bottomLeft: Radius.circular(30),
                   bottomRight: Radius.circular(30),
                 ),
@@ -72,14 +75,14 @@ class _UserFormState extends State<UserForm> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   _buildTextField('Name', nameController),
-                  SizedBox(height: 30),
+                  const SizedBox(height: 30),
                   _buildTextField('Mobile No.', noController,
                       keyboardType: TextInputType.number,
                       maxLength: 10,
                       inputFormatter: <TextInputFormatter>[
                         FilteringTextInputFormatter.digitsOnly
                       ]),
-                  SizedBox(height: 30),
+                  const SizedBox(height: 30),
                   _buildTextField('Address', addressController),
                 ],
               ),
@@ -88,14 +91,14 @@ class _UserFormState extends State<UserForm> {
             MaterialButton(
               onPressed: _validateForm,
               color: AppColors.buttonColor1,
-              child: Text(
-                'Save',
-                style: AppTextStyles.normalText1(),
-              ),
               shape: const RoundedRectangleBorder(
                   borderRadius: BorderRadius.all(Radius.circular(20.0))),
               elevation: 1,
               height: 40,
+              child: Text(
+                'Save',
+                style: AppTextStyles.normalText1(),
+              ),
             ),
           ],
         ),
@@ -103,6 +106,7 @@ class _UserFormState extends State<UserForm> {
     );
   }
 
+// Widget build method.
   Widget _buildTextField(
     String label,
     TextEditingController controller, {
@@ -123,7 +127,7 @@ class _UserFormState extends State<UserForm> {
           maxLength: maxLength,
           inputFormatters: inputFormatter, // Set input formatters
           style: AppTextStyles.textfieldStyle1(),
-          decoration: InputDecoration(
+          decoration: const InputDecoration(
             filled: true,
             fillColor: Colors.white,
             enabledBorder: UnderlineInputBorder(
@@ -131,11 +135,12 @@ class _UserFormState extends State<UserForm> {
             ),
           ),
         ),
-        SizedBox(height: 15),
+        const SizedBox(height: 15),
       ],
     );
   }
 
+// Validation function.
   Future<void> _validateForm() async {
     if (nameController.text.isEmpty ||
         noController.text.isEmpty ||
@@ -146,14 +151,14 @@ class _UserFormState extends State<UserForm> {
         context: context,
         builder: (context) {
           return AlertDialog(
-            title: Text('Error'),
-            content: Text('Please fill out all fields.'),
+            title: const Text('Error'),
+            content: const Text('Please fill out all fields.'),
             actions: [
               TextButton(
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
-                child: Text('OK'),
+                child: const Text('OK'),
               ),
             ],
           );
@@ -169,6 +174,7 @@ class _UserFormState extends State<UserForm> {
     }
   }
 
+// Function to save user data.
   Future<void> saveUserData() async {
     try {
       User? user = FirebaseAuth.instance.currentUser;
@@ -188,14 +194,15 @@ class _UserFormState extends State<UserForm> {
           'latitude': lat,
           'longitude': lon,
         });
-        CollectionReference ref =  await FirebaseFirestore.instance.collection('users');
-        ref.doc(userId).update({'data':true});
-        print('User data saved successfully!');
+        CollectionReference ref =
+            FirebaseFirestore.instance.collection('users');
+        ref.doc(userId).update({'data': true});
+        log('User data saved successfully!');
       } else {
-        print('No user is currently signed in.');
+        log('No user is currently signed in.');
       }
     } catch (e) {
-      print('Error saving user data: $e');
+      log('Error saving user data: $e');
     }
   }
 

@@ -3,10 +3,10 @@ import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:skill_hire/User_Side/user_screens/user_dashboard.dart';
 import 'package:skill_hire/User_Side/user_screens/user_providers_screen.dart';
 import 'package:skill_hire/User_Side/user_screens/user_profile.dart';
-
 import '../globals/app_colors.dart';
 import '../globals/app_textStyle.dart';
 
+// User navbar.
 class UserHomePage extends StatefulWidget {
   const UserHomePage({super.key});
   @override
@@ -15,9 +15,9 @@ class UserHomePage extends StatefulWidget {
 
 class _UserHomePageState extends State<UserHomePage> {
   List<Widget> screenList = [
-    UserDashboard(),
-    UserProviders(),
-    UserProfile(),
+    const UserDashboard(),
+    const UserProviders(),
+    const UserProfile(),
   ];
   int homeIndex = 0;
   @override
@@ -25,15 +25,18 @@ class _UserHomePageState extends State<UserHomePage> {
     return Scaffold(
       backgroundColor: AppColors.mainBgColor,
       appBar: AppBar(
-      automaticallyImplyLeading: false,
-      backgroundColor: AppColors.mainBgColor2,
-      title: Center(
-        child: Text('SkillHire',style: AppTextStyles.heading2Normal(),),
+        automaticallyImplyLeading: false,
+        backgroundColor: AppColors.mainBgColor2,
+        title: Center(
+          child: Text(
+            'SkillHire',
+            style: AppTextStyles.heading2Normal(),
+          ),
+        ),
       ),
-    ),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.only(
+          borderRadius: const BorderRadius.only(
               topLeft: Radius.circular(20), topRight: Radius.circular(20)),
           color: AppColors.mainBgColor2,
         ),
@@ -51,8 +54,8 @@ class _UserHomePageState extends State<UserHomePage> {
               activeColor: Colors.white,
               tabBackgroundColor: AppColors.buttonColor1,
               gap: 10,
-              padding: EdgeInsets.all(16),
-              tabs: [
+              padding: const EdgeInsets.all(16),
+              tabs: const [
                 GButton(
                   icon: Icons.home,
                   text: 'Home',
@@ -69,8 +72,8 @@ class _UserHomePageState extends State<UserHomePage> {
         ),
       ),
       body: IndexedStack(
-        children: screenList,
         index: homeIndex,
+        children: screenList,
       ),
     );
   }

@@ -1,12 +1,14 @@
+import 'dart:developer';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
 import 'package:skill_hire/globals/app_textStyle.dart';
-
 import '../../globals/app_colors.dart';
 import '../job_creation_form.dart';
 
+// User Home Screen.
 class UserDashboard extends StatefulWidget {
   const UserDashboard({Key? key}) : super(key: key);
 
@@ -17,9 +19,9 @@ class UserDashboard extends StatefulWidget {
 class _UserDashboardState extends State<UserDashboard> {
   String userId = '';
 
-  TextEditingController _titleController = TextEditingController();
-  TextEditingController _rateController = TextEditingController();
-  TextEditingController _descriptionController = TextEditingController();
+  final TextEditingController _titleController = TextEditingController();
+  final TextEditingController _rateController = TextEditingController();
+  final TextEditingController _descriptionController = TextEditingController();
   @override
   void initState() {
     super.initState();
@@ -39,7 +41,7 @@ class _UserDashboardState extends State<UserDashboard> {
               scale: 1.5,
             ),
           ),
-          Center(
+          const Center(
             child: Text(
               'Welcome!',
               style: TextStyle(fontSize: 30),
@@ -61,7 +63,7 @@ class _UserDashboardState extends State<UserDashboard> {
                   },
                 );
               },
-              icon: Icon(
+              icon: const Icon(
                 Icons.add,
                 size: 50,
               ),
@@ -74,16 +76,16 @@ class _UserDashboardState extends State<UserDashboard> {
               style: AppTextStyles.normalText1(),
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 20,
           ),
-          Center(
+          const Center(
             child: Text(
               'Active Jobs',
               style: TextStyle(fontSize: 30),
             ),
           ),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           Container(
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -94,11 +96,7 @@ class _UserDashboardState extends State<UserDashboard> {
                       .where('userId', isEqualTo: userId)
                       .snapshots(),
                   builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    } else if (snapshot.hasError) {
+                    if (snapshot.hasError) {
                       return Center(
                         child: Text('Error: ${snapshot.error}'),
                       );
@@ -106,7 +104,7 @@ class _UserDashboardState extends State<UserDashboard> {
                       final List<DocumentSnapshot> jobs = snapshot.data!.docs;
 
                       if (jobs.isEmpty) {
-                        return Center(
+                        return const Center(
                           child: Text('No active tasks!'),
                         );
                       }
@@ -116,15 +114,15 @@ class _UserDashboardState extends State<UserDashboard> {
                             .doc(jobId)
                             .delete()
                             .then((_) {
-                          print('Job deleted successfully');
+                          log('Job deleted successfully');
                         }).catchError((error) {
-                          print('Error deleting job: $error');
+                          log('Error deleting job: $error');
                         });
                       }
 
                       return ListView.builder(
                         shrinkWrap: true,
-                        physics: NeverScrollableScrollPhysics(),
+                        physics: const NeverScrollableScrollPhysics(),
                         itemCount: jobs.length,
                         itemBuilder: (context, index) {
                           final job = jobs[index];
@@ -143,10 +141,11 @@ class _UserDashboardState extends State<UserDashboard> {
                                           builder: (BuildContext context) {
                                         return Scaffold(
                                           appBar: AppBar(
-                                            title: Text('Job'),
+                                            title: const Text('Job'),
                                             actions: [
                                               DropdownButton<String>(
-                                                icon: Icon(Icons.more_vert),
+                                                icon:
+                                                    const Icon(Icons.more_vert),
                                                 onChanged: (String? value) {
                                                   if (value == 'edit') {
                                                     showEditDialog(
@@ -158,9 +157,9 @@ class _UserDashboardState extends State<UserDashboard> {
                                                       builder: (BuildContext
                                                           context) {
                                                         return AlertDialog(
-                                                          title: Text(
+                                                          title: const Text(
                                                               'Confirm Deletion'),
-                                                          content: Text(
+                                                          content: const Text(
                                                               'Are you sure you want to delete this job?'),
                                                           actions: [
                                                             TextButton(
@@ -177,7 +176,7 @@ class _UserDashboardState extends State<UserDashboard> {
                                                                 Navigator.pop(
                                                                     context); // Close dialog
                                                               },
-                                                              child: Text(
+                                                              child: const Text(
                                                                   'Cancel'),
                                                             ),
                                                             TextButton(
@@ -187,7 +186,7 @@ class _UserDashboardState extends State<UserDashboard> {
                                                                 Navigator.pop(
                                                                     context); // Close dialog
                                                               },
-                                                              child: Text(
+                                                              child: const Text(
                                                                 'Delete',
                                                                 style: TextStyle(
                                                                     color: Colors
@@ -222,46 +221,46 @@ class _UserDashboardState extends State<UserDashboard> {
                                                       horizontal: 20),
                                               child: Column(
                                                 children: [
-                                                  SizedBox(
+                                                  const SizedBox(
                                                     height: 30,
                                                   ),
                                                   Row(
                                                     children: [
-                                                      Text(
+                                                      const Text(
                                                         'Title : ',
                                                         style: TextStyle(
                                                             fontSize: 20),
                                                       ),
                                                       Text(
                                                         job['title'] ?? '',
-                                                        style: TextStyle(
+                                                        style: const TextStyle(
                                                             fontSize: 20),
                                                       ),
                                                     ],
                                                   ),
-                                                  SizedBox(
+                                                  const SizedBox(
                                                     height: 20,
                                                   ),
                                                   Row(
                                                     children: [
-                                                      Text(
+                                                      const Text(
                                                         'Requirment : ',
                                                         style: TextStyle(
                                                             fontSize: 20),
                                                       ),
                                                       Text(
                                                         job['requirment'] ?? '',
-                                                        style: TextStyle(
+                                                        style: const TextStyle(
                                                             fontSize: 20),
                                                       ),
                                                     ],
                                                   ),
-                                                  SizedBox(
+                                                  const SizedBox(
                                                     height: 20,
                                                   ),
                                                   Row(
                                                     children: [
-                                                      Text(
+                                                      const Text(
                                                         'Description : ',
                                                         style: TextStyle(
                                                             fontSize: 20),
@@ -269,71 +268,69 @@ class _UserDashboardState extends State<UserDashboard> {
                                                       Text(
                                                         job['description'] ??
                                                             '',
-                                                        style: TextStyle(
+                                                        style: const TextStyle(
                                                             fontSize: 20),
                                                       ),
                                                     ],
                                                   ),
-                                                  SizedBox(
+                                                  const SizedBox(
                                                     height: 20,
                                                   ),
                                                   Row(
                                                     children: [
-                                                      Text(
+                                                      const Text(
                                                         'Address : ',
                                                         style: TextStyle(
                                                             fontSize: 20),
                                                       ),
                                                       Text(
                                                         job['adress'] ?? '',
-                                                        style: TextStyle(
+                                                        style: const TextStyle(
                                                             fontSize: 20),
                                                       ),
                                                     ],
                                                   ),
-                                                  SizedBox(
+                                                  const SizedBox(
                                                     height: 20,
                                                   ),
                                                   Row(
                                                     children: [
-                                                      Text(
+                                                      const Text(
                                                         'Created by : ',
                                                         style: TextStyle(
                                                             fontSize: 20),
                                                       ),
                                                       Text(
                                                         job['createdby'] ?? '',
-                                                        style: TextStyle(
+                                                        style: const TextStyle(
                                                             fontSize: 20),
                                                       ),
                                                     ],
                                                   ),
-                                                  SizedBox(
+                                                  const SizedBox(
                                                     height: 20,
                                                   ),
-
                                                   Row(
                                                     children: [
-                                                      Text(
+                                                      const Text(
                                                         'Expected Rate : Rs ',
                                                         style: TextStyle(
                                                             fontSize: 20),
                                                       ),
                                                       Text(
                                                         job['rate'] ?? '',
-                                                        style: TextStyle(
+                                                        style: const TextStyle(
                                                             fontSize: 20),
                                                       ),
                                                     ],
                                                   ),
-                                                  SizedBox(
+                                                  const SizedBox(
                                                     height: 20,
                                                   ),
                                                   MaterialButton(
                                                     onPressed: () {
                                                       Navigator.pop(context);
                                                     },
-                                                    child: Text('Back'),
                                                     color:
                                                         AppColors.buttonColor1,
                                                     shape: const RoundedRectangleBorder(
@@ -343,6 +340,7 @@ class _UserDashboardState extends State<UserDashboard> {
                                                                     20.0))),
                                                     elevation: 5.0,
                                                     height: 40,
+                                                    child: const Text('Back'),
                                                   )
                                                 ],
                                               ),
@@ -355,7 +353,7 @@ class _UserDashboardState extends State<UserDashboard> {
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(15.0),
                                   ),
-                                  trailing: Icon(Icons.arrow_forward_ios),
+                                  trailing: const Icon(Icons.arrow_forward_ios),
                                   title: Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
@@ -366,7 +364,7 @@ class _UserDashboardState extends State<UserDashboard> {
                                             'Title :',
                                             style: AppTextStyles.tileText(),
                                           ),
-                                          SizedBox(
+                                          const SizedBox(
                                             width: 10,
                                           ),
                                           Expanded(
@@ -385,7 +383,7 @@ class _UserDashboardState extends State<UserDashboard> {
                                             'Requirment :',
                                             style: AppTextStyles.tileText(),
                                           ),
-                                          SizedBox(
+                                          const SizedBox(
                                             width: 10,
                                           ),
                                           Expanded(
@@ -418,18 +416,20 @@ class _UserDashboardState extends State<UserDashboard> {
     );
   }
 
+// Function to get current user id.
   String? getCurrentUserId() {
     User? user = FirebaseAuth.instance.currentUser;
     if (user != null) {
       String userId = user.uid;
-      print('Current User ID: $userId');
+      log('Current User ID: $userId');
       return userId;
     } else {
-      print('No user is currently signed in.');
+      log('No user is currently signed in.');
       return null;
     }
   }
 
+// Show edit dialog.
   void showEditDialog(BuildContext context, String docId) {
     showDialog(
       context: context,
@@ -446,7 +446,7 @@ class _UserDashboardState extends State<UserDashboard> {
               children: [
                 TextFormField(
                   controller: _titleController,
-                  decoration: InputDecoration(labelText: 'Job Title'),
+                  decoration: const InputDecoration(labelText: 'Job Title'),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter a job title';
@@ -456,7 +456,8 @@ class _UserDashboardState extends State<UserDashboard> {
                 ),
                 TextFormField(
                   controller: _descriptionController,
-                  decoration: InputDecoration(labelText: 'Job Description'),
+                  decoration:
+                      const InputDecoration(labelText: 'Job Description'),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter a job description';
@@ -465,13 +466,13 @@ class _UserDashboardState extends State<UserDashboard> {
                   },
                   maxLines: 1,
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 10,
                 ),
                 TextFormField(
                   controller: _rateController,
-                  decoration:
-                      InputDecoration(labelText: 'Expected rate (Rs/day)'),
+                  decoration: const InputDecoration(
+                      labelText: 'Expected rate (Rs/day)'),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter the expected rate';
@@ -499,13 +500,13 @@ class _UserDashboardState extends State<UserDashboard> {
                 Navigator.pop(context);
               },
               color: AppColors.buttonColor1,
+              shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(20.0))),
+              elevation: 1,
               child: Text(
                 'Cancel',
                 style: AppTextStyles.normalText1().copyWith(fontSize: 20),
               ),
-              shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(20.0))),
-              elevation: 1,
             ),
             MaterialButton(
               onPressed: () {
@@ -516,16 +517,17 @@ class _UserDashboardState extends State<UserDashboard> {
                   updateUserData(newtitle, newDescription, docId, newRate);
                 });
 
-                Navigator.of(context).popUntil(ModalRoute.withName("/userHome"));
+                Navigator.of(context)
+                    .popUntil(ModalRoute.withName("/userHome"));
               },
               color: AppColors.buttonColor1,
+              shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(20.0))),
+              elevation: 1,
               child: Text(
                 'Save',
                 style: AppTextStyles.normalText1().copyWith(fontSize: 20),
               ),
-              shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(20.0))),
-              elevation: 1,
             ),
           ],
         );
@@ -533,6 +535,7 @@ class _UserDashboardState extends State<UserDashboard> {
     );
   }
 
+// Function to update user data to firestore.
   Future<void> updateUserData(String newtitle, String newDescription,
       String docId, String newRate) async {
     try {
@@ -549,16 +552,16 @@ class _UserDashboardState extends State<UserDashboard> {
             'rate': newRate,
           });
 
-          print('User data updated successfully');
+          log('User data updated successfully');
         } else {
-          print('Name or mobile number cannot be empty');
+          log('Name or mobile number cannot be empty');
           // Show an error message or handle invalid input case
         }
       } else {
-        print('No user is currently signed in');
+        log('No user is currently signed in');
       }
     } catch (e) {
-      print('Error updating user data: $e');
+      log('Error updating user data: $e');
       // Handle Firestore update error
     }
   }

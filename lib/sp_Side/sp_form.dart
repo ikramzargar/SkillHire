@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -7,6 +9,7 @@ import 'package:skill_hire/globals/app_textStyle.dart';
 import 'package:skill_hire/services/location_service.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 
+// Form gor service provider.
 class SpForm extends StatefulWidget {
   const SpForm({Key? key}) : super(key: key);
 
@@ -42,19 +45,21 @@ class _SpFormState extends State<SpForm> {
     '5+ years',
   ];
   String? experience;
- @override
+  @override
   void dispose() {
-   _nameController.dispose();
-   noController.dispose();
-   rateController.dispose();
+    _nameController.dispose();
+    noController.dispose();
+    rateController.dispose();
     super.dispose();
   }
+
   @override
   void initState() {
     super.initState();
     getLocation();
   }
 
+// Function to get location.
   Future<void> getLocation() async {
     try {
       Location location = Location();
@@ -62,10 +67,10 @@ class _SpFormState extends State<SpForm> {
       setState(() {
         lat = location.latitude!;
         lon = location.longitude!;
-        print(lon + lat);
+        log((lon + lat) as String);
       });
     } catch (e) {
-      print('Error getting location: $e');
+      log('Error getting location: $e');
     }
   }
 
@@ -81,7 +86,7 @@ class _SpFormState extends State<SpForm> {
               width: double.maxFinite,
               decoration: BoxDecoration(
                 color: AppColors.mainBgColor2,
-                borderRadius: BorderRadius.only(
+                borderRadius: const BorderRadius.only(
                   bottomLeft: Radius.circular(30),
                   bottomRight: Radius.circular(30),
                 ),
@@ -101,9 +106,10 @@ class _SpFormState extends State<SpForm> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   _buildTextField('Name', _nameController),
-
-                  _buildTextField('Mobile No.', noController,isNumeric: true,
-                      keyboardType: TextInputType.number, maxLength: 10),
+                  _buildTextField('Mobile No.', noController,
+                      isNumeric: true,
+                      keyboardType: TextInputType.number,
+                      maxLength: 10),
                   _buildTextField('Address', addressController),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -112,7 +118,7 @@ class _SpFormState extends State<SpForm> {
                         'Profession',
                         style: AppTextStyles.normalText1(),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 10,
                       ),
                       DropdownButtonHideUnderline(
@@ -137,7 +143,7 @@ class _SpFormState extends State<SpForm> {
                               borderRadius: BorderRadius.circular(15),
                               border: Border.all(color: Colors.black),
                             ),
-                            padding: EdgeInsets.symmetric(
+                            padding: const EdgeInsets.symmetric(
                                 horizontal: 16, vertical: 10),
                             height: 40,
                             width: 300,
@@ -156,7 +162,7 @@ class _SpFormState extends State<SpForm> {
                           ),
                         ),
                       ),
-                      SizedBox(height: 15),
+                      const SizedBox(height: 15),
                     ],
                   ),
                   Column(
@@ -166,7 +172,7 @@ class _SpFormState extends State<SpForm> {
                         'Experience (years)',
                         style: AppTextStyles.normalText1(),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 10,
                       ),
                       DropdownButtonHideUnderline(
@@ -191,7 +197,7 @@ class _SpFormState extends State<SpForm> {
                               borderRadius: BorderRadius.circular(15),
                               border: Border.all(color: Colors.black),
                             ),
-                            padding: EdgeInsets.symmetric(
+                            padding: const EdgeInsets.symmetric(
                                 horizontal: 16, vertical: 10),
                             height: 40,
                             width: 300,
@@ -210,11 +216,13 @@ class _SpFormState extends State<SpForm> {
                           ),
                         ),
                       ),
-                      SizedBox(height: 15),
+                      const SizedBox(height: 15),
                     ],
                   ),
-                  _buildTextField('Rate (Rs/Day)', rateController,isNumeric: true,
-                      keyboardType: TextInputType.number, maxLength: 4),
+                  _buildTextField('Rate (Rs/Day)', rateController,
+                      isNumeric: true,
+                      keyboardType: TextInputType.number,
+                      maxLength: 4),
                 ],
               ),
             ),
@@ -225,13 +233,13 @@ class _SpFormState extends State<SpForm> {
                   saveSpData().then((_) {
                     Navigator.pushReplacementNamed(
                       context,
-                     '/spHome',
+                      '/spHome',
                     );
                   });
                 } else {
                   // Show a message or alert the user that the form is incomplete
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
+                    const SnackBar(
                       content: Text('Please fill out all required fields.'),
                       duration: Duration(seconds: 2),
                     ),
@@ -239,14 +247,14 @@ class _SpFormState extends State<SpForm> {
                 }
               },
               color: AppColors.buttonColor1,
-              child: Text(
-                'Save',
-                style: AppTextStyles.normalText1(),
-              ),
               shape: const RoundedRectangleBorder(
                   borderRadius: BorderRadius.all(Radius.circular(20.0))),
               elevation: 1,
               height: 40,
+              child: Text(
+                'Save',
+                style: AppTextStyles.normalText1(),
+              ),
             ),
             const SizedBox(height: 30),
           ],
@@ -254,13 +262,15 @@ class _SpFormState extends State<SpForm> {
       ),
     );
   }
+
+  // Widget build method.
   Widget _buildTextField(
-      String label,
-      TextEditingController controller, {
-        TextInputType? keyboardType,
-        int? maxLength,
-        bool isNumeric = false, // Add this parameter to indicate numeric input
-      }) {
+    String label,
+    TextEditingController controller, {
+    TextInputType? keyboardType,
+    int? maxLength,
+    bool isNumeric = false, // Add this parameter to indicate numeric input
+  }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -273,19 +283,22 @@ class _SpFormState extends State<SpForm> {
           keyboardType: keyboardType,
           maxLength: maxLength,
           style: AppTextStyles.textfieldStyle1(),
-          decoration: InputDecoration(
+          decoration: const InputDecoration(
             filled: true,
             fillColor: Colors.white,
             enabledBorder: UnderlineInputBorder(
               borderSide: BorderSide(color: Colors.black, width: 2),
             ),
           ),
-          inputFormatters: isNumeric ? [FilteringTextInputFormatter.digitsOnly] : null,
+          inputFormatters:
+              isNumeric ? [FilteringTextInputFormatter.digitsOnly] : null,
         ),
-        SizedBox(height: 15),
+        const SizedBox(height: 15),
       ],
     );
   }
+
+  // Validation function.
   bool _validateForm() {
     // Check if the name field is empty
     if (_nameController.text.isEmpty) {
@@ -325,6 +338,8 @@ class _SpFormState extends State<SpForm> {
     // Check if the string contains only digits
     return value.isNotEmpty && int.tryParse(value) != null;
   }
+
+  // Function to save data to firestore.
   Future<void> saveSpData() async {
     try {
       User? user = FirebaseAuth.instance.currentUser;
@@ -346,14 +361,15 @@ class _SpFormState extends State<SpForm> {
           'email': userEmail,
           'available': availability,
         });
-        CollectionReference ref =  await FirebaseFirestore.instance.collection('users');
-        ref.doc(userId).update({'data':true});
-        print('User data saved successfully!');
+        CollectionReference ref =
+            FirebaseFirestore.instance.collection('users');
+        ref.doc(userId).update({'data': true});
+        log('User data saved successfully!');
       } else {
-        print('No user is currently signed in.');
+        log('No user is currently signed in.');
       }
     } catch (e) {
-      print('Error saving user data: $e');
+      log('Error saving user data: $e');
     }
   }
 
@@ -399,6 +415,7 @@ class _SpFormState extends State<SpForm> {
     }
     return itemsHeights;
   }
+
   bool isValidPhoneNumber(String input) {
     return input.length == 10 && int.tryParse(input) != null;
   }

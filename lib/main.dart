@@ -16,27 +16,29 @@ import 'screens/register.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       initialRoute: '/',
       routes: {
-        '/': (context) => IntroScreen(),
-        '/login': (context) => LoginPage(),
-        '/register': (context) => Register(),
-        '/userForm': (context) => UserForm(),
-        '/spForm': (context) => SpForm(),
-        '/spHome': (context) => SpHomePage(),
-        '/spDashboard': (context) => SpDashboard(),
-        '/spJobs': (context) => SpJobs(),
-        '/spProfile': (context) => SpProfile(),
-        '/userHome': (context) => UserHomePage(),
-        '/userDashboard': (context) => UserDashboard(),
-        '/userProfile': (context) => UserProfile(),
+        '/': (context) => const IntroScreen(),
+        '/login': (context) => const LoginPage(),
+        '/register': (context) => const Register(),
+        '/userForm': (context) => const UserForm(),
+        '/spForm': (context) => const SpForm(),
+        '/spHome': (context) => const SpHomePage(),
+        '/spDashboard': (context) => const SpDashboard(),
+        '/spJobs': (context) => const SpJobs(),
+        '/spProfile': (context) => const SpProfile(),
+        '/userHome': (context) => const UserHomePage(),
+        '/userDashboard': (context) => const UserDashboard(),
+        '/userProfile': (context) => const UserProfile(),
       },
       debugShowCheckedModeBanner: false,
       title: 'SkillHire',

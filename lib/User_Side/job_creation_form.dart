@@ -1,15 +1,18 @@
+import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../globals/app_colors.dart';
-import '../globals/app_textStyle.dart';
 import '../models/job_model.dart';
 
+// Job creation form.
 class JobCreationForm extends StatefulWidget {
+  const JobCreationForm({super.key});
+
   @override
-  _JobCreationFormState createState() => _JobCreationFormState();
+  State<JobCreationForm> createState() => _JobCreationFormState();
 }
 
 class _JobCreationFormState extends State<JobCreationForm> {
@@ -52,7 +55,7 @@ class _JobCreationFormState extends State<JobCreationForm> {
           children: [
             TextFormField(
               controller: titleController,
-              decoration: InputDecoration(labelText: 'Job Title'),
+              decoration: const InputDecoration(labelText: 'Job Title'),
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return 'Please enter a job title';
@@ -60,17 +63,17 @@ class _JobCreationFormState extends State<JobCreationForm> {
                 return null;
               },
             ),
-            SizedBox(
+            const SizedBox(
               height: 10,
             ),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
+                const Text(
                   'Profession',
                   style: TextStyle(fontSize: 18),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 10,
                 ),
                 DropdownButtonHideUnderline(
@@ -95,7 +98,8 @@ class _JobCreationFormState extends State<JobCreationForm> {
                         borderRadius: BorderRadius.circular(15),
                         border: Border.all(color: Colors.black),
                       ),
-                      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 10),
                       height: 40,
                       width: 300,
                     ),
@@ -104,19 +108,20 @@ class _JobCreationFormState extends State<JobCreationForm> {
                     ),
                     menuItemStyleData: MenuItemStyleData(
                       padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                      customHeights: _getCustomItemsHeights(givenlist: professions),
+                      customHeights:
+                          _getCustomItemsHeights(givenlist: professions),
                     ),
                     iconStyleData: const IconStyleData(
                       openMenuIcon: Icon(Icons.arrow_drop_up),
                     ),
                   ),
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
               ],
             ),
             TextFormField(
               controller: descriptionController,
-              decoration: InputDecoration(labelText: 'Job Description'),
+              decoration: const InputDecoration(labelText: 'Job Description'),
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return 'Please enter a job description';
@@ -127,7 +132,8 @@ class _JobCreationFormState extends State<JobCreationForm> {
             ),
             TextFormField(
               controller: rateController,
-              decoration: InputDecoration(labelText: 'Expected rate (Rs/day)'),
+              decoration:
+                  const InputDecoration(labelText: 'Expected rate (Rs/day)'),
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return 'Please enter the expected rate';
@@ -142,11 +148,11 @@ class _JobCreationFormState extends State<JobCreationForm> {
               maxLength: 4,
               keyboardType: TextInputType.number,
               inputFormatters: <TextInputFormatter>[
-                FilteringTextInputFormatter.allow(RegExp(r'[0-9]')), // Allow only digits
+                FilteringTextInputFormatter.allow(
+                    RegExp(r'[0-9]')), // Allow only digits
               ],
             ),
-
-            SizedBox(
+            const SizedBox(
               height: 20,
             ),
             Row(
@@ -156,13 +162,15 @@ class _JobCreationFormState extends State<JobCreationForm> {
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
-                  child: Text('Cancel', style: TextStyle(fontSize: 20)),
                   color: AppColors.buttonColor1,
                   shape: const RoundedRectangleBorder(
                       borderRadius: BorderRadius.all(Radius.circular(20.0))),
                   elevation: 5.0,
+                  child: const Text('Cancel', style: TextStyle(fontSize: 20)),
                 ),
-                SizedBox(width: 20,),
+                const SizedBox(
+                  width: 20,
+                ),
                 MaterialButton(
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
@@ -170,11 +178,11 @@ class _JobCreationFormState extends State<JobCreationForm> {
                       saveJob();
                     }
                   },
-                  child: Text('Save', style: TextStyle(fontSize: 20)),
                   color: AppColors.buttonColor1,
                   shape: const RoundedRectangleBorder(
                       borderRadius: BorderRadius.all(Radius.circular(20.0))),
                   elevation: 5.0,
+                  child: const Text('Save', style: TextStyle(fontSize: 20)),
                 ),
               ],
             ),
@@ -184,6 +192,7 @@ class _JobCreationFormState extends State<JobCreationForm> {
     );
   }
 
+// Function to fetch user data.
   Future<void> fetchUserData() async {
     try {
       User? user = FirebaseAuth.instance.currentUser;
@@ -193,7 +202,7 @@ class _JobCreationFormState extends State<JobCreationForm> {
             .doc(user.uid)
             .get();
         if (userData.exists) {
-          print('User Data Retrieved Successfully: ${userData.data()}');
+          log('User Data Retrieved Successfully: ${userData.data()}');
           setState(() {
             userId = userData['userId'] ?? '';
             name = userData['name'] ?? '';
@@ -203,13 +212,13 @@ class _JobCreationFormState extends State<JobCreationForm> {
             lon = userData['longitude'] ?? '';
           });
         } else {
-          print('User Data Does Not Exist for UserID: ${user.uid}');
+          log('User Data Does Not Exist for UserID: ${user.uid}');
         }
       } else {
-        print('No User is Currently Signed In');
+        log('No User is Currently Signed In');
       }
     } catch (e) {
-      print('Error Fetching User Data: $e');
+      log('Error Fetching User Data: $e');
     }
   }
 
@@ -255,6 +264,7 @@ class _JobCreationFormState extends State<JobCreationForm> {
     return itemsHeights;
   }
 
+// Function to save job data.
   void saveJob() {
     final jobTitle = titleController.text;
     final jobDescription = descriptionController.text;

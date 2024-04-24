@@ -4,7 +4,10 @@ import '../../globals/app_colors.dart';
 import '../../globals/app_textStyle.dart';
 import '../../models/providers_details_screen.dart';
 
+// Providers screen for user.
 class UserProviders extends StatefulWidget {
+  const UserProviders({super.key});
+
   @override
   State<UserProviders> createState() => _UserProvidersState();
 }
@@ -14,6 +17,7 @@ class _UserProvidersState extends State<UserProviders> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: StreamBuilder(
+        // Get providers from firebase
         stream: FirebaseFirestore.instance
             .collection('spdata')
             .where('available', isEqualTo: true)
@@ -25,16 +29,10 @@ class _UserProvidersState extends State<UserProviders> {
             );
           }
 
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-
           final docs = snapshot.data?.docs ?? [];
 
           if (docs.isEmpty) {
-            return Center(
+            return const Center(
               child: Text('No available service providers.'),
             );
           } else {
@@ -57,7 +55,7 @@ class _UserProvidersState extends State<UserProviders> {
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(15.0),
                           ),
-                          trailing: CircleAvatar(
+                          trailing: const CircleAvatar(
                             child: Icon(Icons.arrow_forward_ios),
                           ),
                           title: Column(
@@ -69,7 +67,7 @@ class _UserProvidersState extends State<UserProviders> {
                                     'Name :',
                                     style: AppTextStyles.tileText(),
                                   ),
-                                  SizedBox(
+                                  const SizedBox(
                                     width: 10,
                                   ),
                                   Expanded(
@@ -88,7 +86,7 @@ class _UserProvidersState extends State<UserProviders> {
                                     'Profession :',
                                     style: AppTextStyles.tileText(),
                                   ),
-                                  SizedBox(
+                                  const SizedBox(
                                     width: 10,
                                   ),
                                   Text(
@@ -103,7 +101,7 @@ class _UserProvidersState extends State<UserProviders> {
                                     'Experience :',
                                     style: AppTextStyles.tileText(),
                                   ),
-                                  SizedBox(
+                                  const SizedBox(
                                     width: 10,
                                   ),
                                   Text(
@@ -128,7 +126,7 @@ class _UserProvidersState extends State<UserProviders> {
                     ),
                   );
                 }
-                return SizedBox.shrink();
+                return const SizedBox.shrink();
               },
             );
           }
