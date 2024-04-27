@@ -1,5 +1,4 @@
 import 'dart:developer';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -185,8 +184,11 @@ class _UserDashboardState extends State<UserDashboard> {
                                                               onPressed: () {
                                                                 deleteJob(
                                                                     jobId);
-                                                                Navigator.pop(
-                                                                    context); // Close dialog
+                                                                Navigator.of(
+                                                                        context)
+                                                                    .popUntil(ModalRoute
+                                                                        .withName(
+                                                                            "/userHome")); // Close dialog
                                                               },
                                                               child: const Text(
                                                                 'Delete',

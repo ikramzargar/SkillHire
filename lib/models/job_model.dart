@@ -2,7 +2,7 @@ import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-//Defines thte properties of a job.
+//Defines the properties of a job.
 class Job {
   String title;
   String description;

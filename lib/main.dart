@@ -12,7 +12,7 @@ import 'package:skill_hire/sp_Side/sp_screens/sp_dashboard.dart';
 import 'package:skill_hire/sp_Side/sp_screens/sp_jobs_screen.dart';
 import 'package:skill_hire/sp_Side/sp_screens/sp_profile.dart';
 import 'screens/register.dart';
-
+// Main fuction.
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
